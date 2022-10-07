@@ -1,10 +1,10 @@
 """
-Network from e3nn.nn.models.gate_points_2101
+e3nn gate_points_2101 network
 
 Additional features:
     - use custom activation function in gated convolution
-    - stronger typing
     - hidden size config more readable
+    - graph compute caching
 
 """
 
