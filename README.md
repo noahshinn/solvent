@@ -5,9 +5,13 @@ Solvent is an open-source code for training E(3)-equivariant interatomic potenti
 
 ## Installation
 Python >= 3.7
-PyTorch >= 1.12+CUDA
+torch >= 1.12+CUDA
 
 To install:
+  * Install torch-geometric, torch-scatter, torch-cluster
+  ```
+  pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.12.0+cu116.html
+  ```
   * Install [e3nn](https://e3nn.org/)
   ```
   pip install e3nn
