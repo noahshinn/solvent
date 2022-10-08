@@ -9,7 +9,7 @@ import multiprocessing
 from joblib import Parallel, delayed
 from torch_geometric.data.data import Data
 
-from solvent import utils
+from solvent import utils, data
 
 from typing import List, Optional
 from solvent import types
@@ -19,28 +19,42 @@ class EnergyForceDataset:
     """
     Usage:
 
-    Load an EnergyForceDataset:
+    Load an EnergyForceDataset with 100 structures:
     >>> from solvent import data
     >>> ds = data.EnergyForceDataset('file.json', units='kcal')
+    ...     json_file='file.json',
+    ...     nstructures=100,
+    ...     units='kcal'
+    ... )
     >>> ds.load()
 
-    Get averages for target scaling:
+    Get averages and scale to target values:
     >>> mean_energy = ds.get_energy_mean()
     >>> rms_force = ds.get_force_rms()
-
-    Build a DataLoader:
     >>> ds.to_target_energy(shift_factor=mean_energy, scale_factor = 1 / rms_force)
     >>> ds.to_target_force(scale_factor = 1 / rms_force)
+
+    Build a DataLoader with 100 structures and a batch size of 1:
     >>> loader = data.DataLoader(ds.get_dataset(), batch_size=1, shuffle=True)
+
+    Generate train and test DataLoaders with 100 total structures,
+    a train/test split of 90/10, and a batch size of 1:
+    >>> train_loader, test_loader = ds.gen_dataloaders(
+    ...     split=0.9,
+    ...     batch_size=1,
+    ...     should_shuffle=True
+    ... )
 
     """
     def __init__(
             self,
             json_file: str,
+            nstructures: int,
             units: str = 'HARTREE',
             ncores: Optional[int] = None
         ) -> None:
         assert json_file.endswith('.json')
+        assert nstructures >= 2
         assert units.upper() == 'HARTREE' \
             or units.upper() == 'EV' \
             or units.upper() == 'KCAL'
@@ -52,7 +66,7 @@ class EnergyForceDataset:
         self._forces = self._data['grad']
         self._natoms = len(self._xyz[0])
         self._nstates = len(self._energies[0])
-        self._nstructures = len(self._xyz)
+        self._nstructures = nstructures
         self._is_loaded = False
         self._dataset: List[Data] = []
         self._units = units.upper()
@@ -99,6 +113,26 @@ class EnergyForceDataset:
             raise utils.DataNotLoadedException('must load dataset before accessing content.')
         for i in range(self._nstructures):
             self._dataset[i].forces *= scale_factor
+
+    def gen_dataloaders(
+            self,
+            split: float = 0.8,
+            batch_size: int = 1,
+            should_shuffle: bool = True
+        ) -> types.Loaders:
+        ntrain = round(self._nstructures * split)
+        ntest = self._nstructures - ntrain
+        train_loader = data.DataLoader(
+            dataset=self._dataset[:ntrain],
+            batch_size=batch_size,
+            shuffle=should_shuffle
+        )
+        test_loader = data.DataLoader(
+            dataset=self._dataset[-ntest:],
+            batch_size=batch_size,
+            shuffle=should_shuffle
+        )
+        return types.Loaders(train_loader, test_loader)
 
     def __len__(self) -> int:
         if not self._is_loaded:
