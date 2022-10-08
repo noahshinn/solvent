@@ -31,7 +31,8 @@ class Trainer:
     ...     model=model,
     ...     train_loader=train_loader,
     ...     test_loader=test_loader,
-    ...     *args, **kwargs)
+    ...     *args, **kwargs
+    ... )
     >>> trainer.fit()
 
     Resume training:
@@ -70,7 +71,7 @@ class Trainer:
             start_lr: float = 1e-2,
             log_file: str = 'train.log',
             nn_save_dir: str = 'nn',
-            chkpt_freq: int = 1
+            chkpt_freq: int = 1,
         ) -> None:
         torch.set_default_dtype(torch.float32)
         if torch.cuda.is_available():
