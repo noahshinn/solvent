@@ -1,5 +1,5 @@
 # Solvent
-Solvent is an open-source code for training E(3)-equivariant interatomic potentials.
+Solvent is an open-source code for training E(3)-equivariant interatomic potentials across multiple electronic states.
 
 **PLEASE NOTE:** the Solvent code is still under active development.
 
@@ -23,6 +23,7 @@ To install:
   ```
 
   * Install Solvent (dev)
+    from source:
   ```
   git clone https://github.com/noahshinn024/solvent.git
   cd solvent
