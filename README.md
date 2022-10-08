@@ -28,3 +28,7 @@ To install:
   cd solvent
   python setup.py develop
   ```
+
+## Authors
+* Noah Shinn
+* Sulin Liu 
