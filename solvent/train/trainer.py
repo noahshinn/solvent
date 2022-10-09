@@ -6,6 +6,14 @@ STATUS: DEV
 import os
 import time
 import torch
+from torch.optim import (
+    Adam,
+    SGD
+)
+from torch.optim.lr_scheduler import (
+    ExponentialLR,
+    ReduceLROnPlateau
+)
 
 from solvent import (
     nn,
@@ -14,7 +22,7 @@ from solvent import (
     constants
 )
 
-from typing import Dict, Optional, Union
+from typing import Dict, Union
 from torch_geometric.loader import DataLoader
 from torch_geometric.data.data import Data
 
@@ -63,8 +71,8 @@ class Trainer:
             model: torch.nn.Module,
             train_loader: DataLoader,
             test_loader: DataLoader,
-            optim_params: Optional[Dict] = None,
-            scheduler_params: Optional[Dict] = None,
+            optim: Union[Adam, SGD, None] = None,
+            scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
             energy_contribution: float = 1.0,
             force_contribution: float = 1.0,
             start_epoch: int = 0,
@@ -90,30 +98,30 @@ class Trainer:
         self._cur_chkpt_count = 0
         self._exit_code = 'NOT TERMINATED'
 
-        self._optim = torch.optim.Adam(model.parameters(), lr=start_lr)
-        if not optim_params is None:
-            self._optim.load_state_dict(optim_params)
-        self._scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer=self._optim,
-            mode='min',
-            factor=0.8,
-            patience=50,
-            threshold=1e-4,
-            threshold_mode='rel',
-            cooldown=0,
-            min_lr=0.0,
-            eps=1e-8,
-            verbose=False
-        )
-        if not scheduler_params is None:
-            self._scheduler.load_state_dict(scheduler_params)
+        if not optim is None:
+            self._optim = optim
+        else:
+            self._optim = torch.optim.Adam(model.parameters(), lr=start_lr)
+
+        if not scheduler is None:
+            self._scheduler = scheduler
+        else:
+            self._scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                optimizer=self._optim,
+                mode='min',
+                factor=0.8,
+                patience=50,
+                threshold=1e-4,
+                threshold_mode='rel',
+                cooldown=0,
+                min_lr=0.0,
+                eps=1e-8,
+                verbose=False
+            )
+
+        self._is_resume = not optim is None and not scheduler is None
         self._lr = self._optim.param_groups[0]['lr']
 
-        if not optim_params is None and not scheduler_params is None:
-            self._is_resume = True
-        else:
-            self._is_resume = False
-        
         self._loss = nn.EnergyForceLoss(
             energy_contribution=energy_contribution,
             force_contribution=force_contribution
@@ -171,7 +179,10 @@ class Trainer:
         
     def _update(self, loss: torch.Tensor) -> None:
         self._walltime = time.perf_counter()
-        self._scheduler.step(metrics=loss)
+        if isinstance(self._scheduler, ReduceLROnPlateau):
+            self._scheduler.step(metrics=loss)
+        else:
+            self._scheduler.step()
         self._loss.reset()
         self._epoch += 1
         self._cur_chkpt_count += 1
@@ -180,10 +191,10 @@ class Trainer:
     def _chkpt(self) -> None:
         save_path = os.path.join(self._nn_save_dir, f'{str(self._epoch)}.pt')
         chkpt = {
-            'epoch': self._epoch,
             'model': self._model.state_dict(),
             'optim': self._optim.state_dict(),
-            'scheduler': self._scheduler.state_dict()
+            'scheduler': self._scheduler.state_dict(),
+            'epoch': self._epoch
         }
         torch.save(chkpt, save_path)
         self._logger.log_chkpt(path=save_path)
