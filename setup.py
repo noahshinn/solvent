@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='solvent',
     version='0.0.0',
-    description='ML for computing excited-state energy potentials for large atomic systems',
+    description='Solvent is an open-source code for training highly accurate equivariant deep learning interatomic potentials for multiple electronic states.',
     author='Noah Shinn, Sulin Liu',
     packages=['solvent'],
     # install_requires=[

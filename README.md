@@ -1,5 +1,5 @@
 # Solvent
-Solvent is an open-source code for training E(3)-equivariant interatomic potentials across multiple electronic states.
+Solvent is an open-source code for training highly accurate equivariant deep learning interatomic potentials for multiple electronic states.
 
 **PLEASE NOTE:** the Solvent code is still under active development.
 
@@ -22,8 +22,7 @@ To install:
   pip install joblib
   ```
 
-  * Install Solvent (dev)
-    from source:
+  * Install Solvent from source by running:
   ```
   git clone https://github.com/noahshinn024/solvent.git
   cd solvent
