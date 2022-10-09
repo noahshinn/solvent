@@ -10,7 +10,12 @@ setup(
     python_requires='>=3.7',
     install_requires=[
         'e3nn',
-        'joblib'
+        'joblib',
+        'torch',
+        'torch-geometric',
+        'torch-sparse',
+        'torch-cluster',
+        'torch-scatter'
     ]
 )
 

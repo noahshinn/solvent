@@ -76,10 +76,11 @@ class Trainer:
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
             energy_contribution: float = 1.0,
             force_contribution: float = 1.0,
+            energy_scale: float = 1.0,
+            force_scale: float = 1.0,
             start_epoch: int = 0,
             start_lr: float = 1e-2,
-            log_file: str = 'train.log',
-            nn_save_dir: str = 'nn',
+            log_dir: str = 'train-log',
             chkpt_freq: int = 1,
             description: str = ''
         ) -> None:
@@ -106,7 +107,7 @@ class Trainer:
             self._test_loader = test_loader 
 
         self._epoch = start_epoch
-        self._nn_save_dir = nn_save_dir
+        self._log_dir = log_dir 
         self._chkpt_freq = chkpt_freq
         self._cur_chkpt_count = 0
         self._exit_code = 'NOT TERMINATED'
@@ -137,15 +138,18 @@ class Trainer:
 
         self._loss = nn.EnergyForceLoss(
             energy_contribution=energy_contribution,
-            force_contribution=force_contribution
+            force_contribution=force_contribution,
+            device=self._device
         )
-        self._logger = logger.Logger(file=log_file, is_resume=self._is_resume)
+        self._e_scale = energy_scale
+        self._f_scale = force_scale 
+        self._logger = logger.Logger(log_dir=log_dir, is_resume=self._is_resume)
         self._description = description
         self._walltime = self._srt_time = time.perf_counter()
 
     def _pred(self, structure: Union[Dict, Data]) -> types.EnergyForcePrediction:
         e = self._model(structure)
-        f = nn.force_grad(e, structure['pos'])
+        f = nn.force_grad(e, structure['pos'], self._device)
         return types.EnergyForcePrediction(e, f)
 
     def _evaluate(self, loader: DataLoader, mode: str) -> types.QMPredMAE:
@@ -153,13 +157,12 @@ class Trainer:
         for structure in loader:
             structure['pos'].requires_grad = True
             structure.to(self._device)
-            e = self._model(structure)
-            f = nn.force_grad(energies=e, pos=structure['pos'])
+            e, f = self._pred(structure)
             self._loss(
                 e_pred=e,
-                e_target=structure['energies'],
+                e_target=structure['energies'].to(self._device),
                 f_pred=f,
-                f_target=structure['forces']
+                f_target=structure['forces'].to(self._device)
             )
             if mode == 'TRAIN':
                 self._step(loss=self._loss.compute_loss())
@@ -178,10 +181,10 @@ class Trainer:
         self._logger.log_epoch(
             epoch=self._epoch,
             lr=self._lr,
-            e_train_mae=e_train_mae,
-            e_test_mae=e_test_mae,
-            f_train_mae=f_train_mae,
-            f_test_mae=f_test_mae,
+            e_train_mae=e_train_mae * self._e_scale,
+            e_test_mae=e_test_mae * self._e_scale,
+            f_train_mae=f_train_mae * self._f_scale,
+            f_test_mae=f_test_mae * self._f_scale,
             duration=time.perf_counter() - self._walltime
         )
 
@@ -202,7 +205,7 @@ class Trainer:
         self._lr = self._optim.param_groups[0]['lr']
 
     def _chkpt(self) -> None:
-        save_path = os.path.join(self._nn_save_dir, f'{str(self._epoch)}.pt')
+        save_path = os.path.join(self._log_dir, f'{str(self._epoch)}.pt')
         chkpt = {
             'model': self._model.state_dict(),
             'optim': self._optim.state_dict(),

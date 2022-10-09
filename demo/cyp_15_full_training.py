@@ -1,7 +1,7 @@
 from solvent import models, train, data
 
 DATA_FILE = 'new-data.json'
-NSTRUCTURES = 10
+NSTRUCTURES = 100
 BATCH_SIZE = 1
 SPLIT = 0.9
 
@@ -43,10 +43,10 @@ model = models.Model(
     irreps_in=f'{NATOM_TYPES}x0e',
     hidden_sizes=[125, 40, 25, 15],
     irreps_out=f'{NSTATES}x0e',
-    nlayers=3,
+    nlayers=4,
     max_radius=4.6,
     nbasis_funcs=8,
-    nradial_layers=2,
+    nradial_layers=3,
     nradial_neurons=128,
     navg_neighbors=16.0,
     cache=None
@@ -62,7 +62,7 @@ trainer = train.Trainer(
     force_contribution=25.0,
     energy_scale=rms_force,
     force_scale=rms_force,
-    description='test run'
+    description='cyclopropenone in a 15 water solvent: full training'
 )
 print('trainer initialized')
 

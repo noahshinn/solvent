@@ -3,6 +3,7 @@ STATUS: DEV
 
 """
 
+import os
 import torch
 import datetime
 
@@ -10,11 +11,14 @@ from solvent import utils
 
 
 class Logger:
-    def __init__(self, file: str, is_resume: bool) -> None:
-        self._file = file
+    def __init__(self, log_dir: str, is_resume: bool) -> None:
+        self._dir = log_dir
+        self._file = os.path.join(log_dir, 'out.log')
         self._performance_queue = utils.PriorityQueue()
         if not is_resume:
-            open(file, 'w').close()
+            if not os.path.exists(self._dir):
+                os.makedirs(self._dir)
+            open(self._file, 'w').close()
 
     def _log(self, msg: str) -> None:
         with open(self._file, 'a') as f:

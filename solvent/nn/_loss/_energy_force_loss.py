@@ -12,15 +12,17 @@ class EnergyForceLoss:
     def __init__(
             self,
             energy_contribution: float = 0.0,
-            force_contribution: float = 0.0
+            force_contribution: float = 0.0,
+            device: str = 'cuda'
         ) -> None:
         self._e_contrib = energy_contribution
         self._f_contrib = force_contribution
+        self._device = device
 
-        self._c_e_mae = torch.zeros(1)
-        self._c_e_mse = torch.zeros(1)
-        self._c_f_mae = torch.zeros(1)
-        self._c_f_mse = torch.zeros(1)
+        self._c_e_mae = torch.zeros(1).to(device)
+        self._c_e_mse = torch.zeros(1).to(device)
+        self._c_f_mae = torch.zeros(1).to(device)
+        self._c_f_mse = torch.zeros(1).to(device)
         self._n = 0
 
     def __call__(
@@ -44,13 +46,13 @@ class EnergyForceLoss:
     def compute_loss(self) -> torch.Tensor:
         e_loss = self._e_contrib * self._c_e_mse
         f_loss = self._f_contrib * self._c_f_mse
-        self._c_e_mse = torch.zeros(1)
-        self._c_f_mse = torch.zeros(1)
+        self._c_e_mse = torch.zeros(1).to(self._device)
+        self._c_f_mse = torch.zeros(1).to(self._device)
         return e_loss + f_loss
     
     def reset(self) -> None:
-        self._c_e_mse = torch.zeros(1)
-        self._c_f_mse = torch.zeros(1)
-        self._c_e_mae = torch.zeros(1)
-        self._c_f_mae = torch.zeros(1)
+        self._c_e_mse = torch.zeros(1).to(self._device)
+        self._c_f_mse = torch.zeros(1).to(self._device)
+        self._c_e_mae = torch.zeros(1).to(self._device)
+        self._c_f_mae = torch.zeros(1).to(self._device)
         self._n = 0

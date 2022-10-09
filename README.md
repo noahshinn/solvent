@@ -25,12 +25,14 @@ To install:
   ```
   pip install e3nn
   ```
-  
   * Install joblib for multiprocessing
   ```
   pip install joblib
   ```
-
+  * Install yaml for alternate config
+  ```
+  pip install pyyaml
+  ```
   * Install Solvent from source by running:
   ```
   git clone https://github.com/noahshinn024/solvent.git

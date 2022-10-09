@@ -7,6 +7,7 @@ TEST_PRELOAD = './ex-preloaded-test.pt'
 NSTRUCTURES = 10
 BATCH_SIZE = 1
 SPLIT = 0.9
+RMS_FORCE = 13.943041801452637
 
 NATOMS = 51
 NATOM_TYPES = 3
@@ -40,6 +41,8 @@ trainer = train.Trainer(
     test_loader=test_loader,
     energy_contribution=1.0,
     force_contribution=25.0,
+    energy_scale=RMS_FORCE,
+    force_scale=RMS_FORCE,
     description='test run'
 )
 print('trainer initialized')
