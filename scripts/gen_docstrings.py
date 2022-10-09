@@ -26,7 +26,6 @@ def gen_doc() -> str:
 
     {triple_quote}"""
     return s
-    # return ast.Expr(value=ast.Str(s))
 
 
 class Visitor(ast.NodeTransformer):
@@ -45,7 +44,7 @@ class Visitor(ast.NodeTransformer):
         return node
 
 def write_func(node_visitor: Visitor, func: ast.FunctionDef) -> str:
-    return to_source(node_visitor.visit(func)).replace('->', '-> ')
+    return node_visitor.visit(func)
 
 def main() -> None:
     node_visitor = Visitor()
@@ -57,11 +56,11 @@ def main() -> None:
                     code = f.read()
                     tree = ast.parse(code)
                     for c in ast.walk(tree):
-                        if isinstance(c, ast.ClassDef):
-                            continue
-                        elif isinstance(c, ast.FunctionDef):
-                            s = write_func(node_visitor, c)
-                            print(s)
+                        if isinstance(c, ast.FunctionDef):
+                            c = write_func(node_visitor, c)
+                    new_code = to_source(tree).replace('->', '-> ')
+                    with open('temp.py', 'w') as write_file:
+                        write_file.write(new_code)
 
 if __name__ == '__main__':
     main()

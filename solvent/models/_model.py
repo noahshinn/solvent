@@ -34,8 +34,6 @@ class Model(torch.nn.Module):
             irreps_in: Union[o3.Irreps, str, None],
             hidden_sizes: List[int],
             irreps_out: Union[o3.Irreps, str],
-            irreps_node_attr: Union[o3.Irreps, str, None],
-            irreps_edge_attr: Union[o3.Irreps, str],
             nlayers: int,
             max_radius: float,
             nbasis_funcs: int,
@@ -53,13 +51,6 @@ class Model(torch.nn.Module):
                 can be set to ``None`` if nodes don't have input features
             hidden_sizes (list(int)): hidden feature sizes
             irreps_out (e3nn.o3.Irreps | str): representation of the output features
-            irreps_node_attr (e3nn.o3.Irreps | str | None): representation of the nodes
-                attributes
-                *can be set to ``None`` if nodes don't have attributes
-            irreps_edge_attr (e3nn.o3.Irreps | str): representation of the edge attributes
-                the edge attributes are :math:`h(r) Y(\vec r / r)`
-                where :math:`h` is a smooth function that goes to zero at ``max_radius``
-                and :math:`Y` are the spherical harmonics polynomials
             nlayers (int): number of gates (non linearities)
             max_radius (float): maximum radius for the convolution
             nbasis_funcs (int): number of basis on which the edge length are
@@ -92,12 +83,9 @@ class Model(torch.nn.Module):
         _hidden_sizes = [(mul, (l, p)) for l, mul in enumerate(hidden_sizes) for p in [-1, 1]]
         self.irreps_hidden = o3.Irreps(_hidden_sizes)
         self.irreps_out = o3.Irreps(irreps_out)
-        self.irreps_node_attr = o3.Irreps(irreps_node_attr) if irreps_node_attr is not None else o3.Irreps("0e")
-        self.irreps_edge_attr = o3.Irreps(irreps_edge_attr)
-
-        self.input_has_node_attr = irreps_node_attr is not None
-
-        irreps = self.irreps_in if self.irreps_in is not None else o3.Irreps("0e")
+        self.irreps_node_attr = o3.Irreps("0e")
+        self.irreps_edge_attr = o3.Irreps.spherical_harmonics(3)
+        irreps = self.irreps_in
 
         if act is None:
             self.act = {
@@ -219,11 +207,7 @@ class Model(torch.nn.Module):
         edge_attr = nn.basis_cutoff(_edge_length, self.max_radius)[:, None] * _edge_sh
 
         x = data["x"]
-
-        if self.input_has_node_attr and "z" in data:
-            z = data["z"]
-        else:
-            z = data["pos"].new_ones((data["pos"].shape[0], 1))
+        z = data["pos"].new_ones((data["pos"].shape[0], 1))
 
         for lay in self.layers:
             x = lay(x, z, edge_src, edge_dst, edge_attr, edge_length_embedded)

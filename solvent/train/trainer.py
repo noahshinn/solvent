@@ -72,6 +72,7 @@ class Trainer:
             log_file: str = 'train.log',
             nn_save_dir: str = 'nn',
             chkpt_freq: int = 1,
+            description: str = ''
         ) -> None:
         torch.set_default_dtype(torch.float32)
         if torch.cuda.is_available():
@@ -118,6 +119,7 @@ class Trainer:
             force_contribution=force_contribution
         )
         self._logger = logger.Logger(file=log_file)
+        self._logger.log_header(description)
         self._walltime = self._srt_time = time.perf_counter()
 
     def _pred(self, structure: Union[Dict, Data]) -> types.EnergyForcePrediction:

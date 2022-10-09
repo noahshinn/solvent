@@ -10,6 +10,7 @@ from ._distribute import distribute
 from ._flatten import flatten
 from ._atom_type_to_one_hot import atom_type_to_one_hot
 from ._center_coords import center_coords
+from ._priority_queue import PriorityQueue
 
 from ._exceptions import (
     DataNotLoadedException
