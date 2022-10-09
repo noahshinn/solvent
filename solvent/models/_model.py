@@ -13,13 +13,11 @@ import torch
 from torch_geometric.data import Data
 from torch_cluster import radius_graph
 from torch_scatter import scatter
-
 from e3nn import o3
 from e3nn.nn import Gate
 from e3nn.math import soft_one_hot_linspace
 
 from solvent import nn
-from solvent.nn import Compose, InteractionBlock
 
 from typing import Dict, Union, Optional, List
 
@@ -110,13 +108,13 @@ class Model(torch.nn.Module):
                 [
                     (mul, ir)
                     for mul, ir in self.irreps_hidden
-                    if ir.l == 0 and computer.tp_path_exists(irreps, self.irreps_edge_attr, ir) # type: ignore
+                    if ir.l == 0 and nn.tp_path_exists(irreps, self.irreps_edge_attr, ir) # type: ignore
                 ]
             )
             irreps_gated = o3.Irreps(
-                    [(mul, ir) for mul, ir in self.irreps_hidden if ir.l > 0 and computer.tp_path_exists(irreps, self.irreps_edge_attr, ir)] # type: ignore
+                    [(mul, ir) for mul, ir in self.irreps_hidden if ir.l > 0 and nn.tp_path_exists(irreps, self.irreps_edge_attr, ir)] # type: ignore
             )
-            ir = "0e" if computer.tp_path_exists(irreps, self.irreps_edge_attr, "0e") else "0o" # type: ignore
+            ir = "0e" if nn.tp_path_exists(irreps, self.irreps_edge_attr, "0e") else "0o" # type: ignore
             irreps_gates = o3.Irreps([(mul, ir) for mul, _ in irreps_gated])
 
             gate = Gate(
@@ -126,7 +124,7 @@ class Model(torch.nn.Module):
                 [act_gates[ir.p] for _, ir in irreps_gates],
                 irreps_gated
             )
-            conv = InteractionBlock(
+            conv = nn.InteractionBlock(
                 irreps, # type: ignore
                 self.irreps_node_attr,
                 self.irreps_edge_attr,
@@ -137,10 +135,10 @@ class Model(torch.nn.Module):
                 navg_neighbors 
             )
             irreps = gate.irreps_out
-            self.layers.append(Compose(conv, gate))
+            self.layers.append(nn.Compose(conv, gate))
 
         self.layers.append(
-            InteractionBlock(
+            nn.InteractionBlock(
                 irreps, # type: ignore
                 self.irreps_node_attr,
                 self.irreps_edge_attr,
@@ -151,9 +149,6 @@ class Model(torch.nn.Module):
                 navg_neighbors 
             )
         )
-
-    def __repr__(self) -> str:
-        return f'Equivariant GNN with {len(self.layers)} convolutional layers.'
 
     def forward(self, data: Union[Data, Dict[str, torch.Tensor]]) -> torch.Tensor:
         """

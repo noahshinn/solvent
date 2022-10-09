@@ -12,12 +12,14 @@ NSTATES = 3
 # load dataset from json
 ds = data.EnergyForceDataset(DATA_FILE, nstructures=NSTRUCTURES, units='kcal')
 ds.load()
+print('loaded dataset')
 
 # compute constants for target data shifting and scaling
 mean_energy = ds.get_energy_mean()
 rms_force = ds.get_force_rms()
 ds.to_target_energy(shift_factor=mean_energy, scale_factor = 1 / rms_force)
 ds.to_target_force(scale_factor = 1 / rms_force)
+print('constants computed')
 
 # train and test loaders
 train_loader, test_loader = ds.gen_dataloaders(
@@ -25,6 +27,7 @@ train_loader, test_loader = ds.gen_dataloaders(
     batch_size=BATCH_SIZE,
     should_shuffle=True
 )
+print('loaders')
 
 # initialize model
 model = models.Model(
@@ -39,6 +42,7 @@ model = models.Model(
     navg_neighbors=16.0,
     cache=None
 )
+print('model initialized')
 
 # initialize trainer
 trainer = train.Trainer(
@@ -49,6 +53,8 @@ trainer = train.Trainer(
     force_contribution=25.0,
     description='test run'
 )
+print('trainer initialized')
 
 # run training
+print('running training')
 trainer.fit()
