@@ -56,6 +56,7 @@ class ResumeConfig:
             epoch: int
         ) -> None:
         self.model = model.load_state_dict(model_state_dict)
+        model.train()
         self.optim = optim.load_state_dict(optim_state_dict)
         self.scheduler = scheduler.load_state_dict(scheduler_state_dict)
         self.epoch = epoch

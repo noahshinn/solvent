@@ -13,5 +13,6 @@ from ._center_coords import center_coords
 from ._priority_queue import PriorityQueue
 
 from ._exceptions import (
-    DataNotLoadedException
+    DataNotLoadedException,
+    InvalidFileType
 )

@@ -19,7 +19,8 @@ from solvent import (
     nn,
     logger,
     types,
-    constants
+    constants,
+    utils
 )
 
 from typing import Dict, Union
@@ -69,8 +70,8 @@ class Trainer:
     def __init__(
             self,
             model: torch.nn.Module,
-            train_loader: DataLoader,
-            test_loader: DataLoader,
+            train_loader: Union[DataLoader, str],
+            test_loader: Union[DataLoader, str],
             optim: Union[Adam, SGD, None] = None,
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
             energy_contribution: float = 1.0,
@@ -90,8 +91,20 @@ class Trainer:
 
         self._model = model
         self._model.to(self._device)
-        self._train_loader = train_loader
-        self._test_loader = test_loader 
+
+        if isinstance(train_loader, str):
+            if not train_loader.endswith('.pt'):
+                raise utils.InvalidFileType('not given .pt file!')
+            self._train_loader = torch.load(train_loader)
+        else:
+            self._train_loader = train_loader
+        if isinstance(test_loader, str):
+            if not test_loader.endswith('.pt'):
+                raise utils.InvalidFileType('not given .pt file!')
+            self._train_loader = torch.load(train_loader)
+        else:
+            self._test_loader = test_loader 
+
         self._epoch = start_epoch
         self._nn_save_dir = nn_save_dir
         self._chkpt_freq = chkpt_freq
