@@ -36,9 +36,9 @@ class ResumeConfig:
     ...     chkpt_file='chkpt.pt',
     ... )
     >>> trainer = train.Trainer(
-    ...     model=model,
-    ...     optim=optim,
-    ...     scheduler=scheduler
+    ...     model=resume_config.model,
+    ...     optim=resume_config.optim,
+    ...     scheduler=resume_config.scheduler,
     ...     *args,
     ...     **kwargs,
     ... )
