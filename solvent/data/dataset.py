@@ -11,7 +11,7 @@ from torch_geometric.data.data import Data
 
 from solvent import utils, data
 
-from typing import List, Optional
+from typing import List, Optional, Dict
 from solvent import types
 
 
@@ -19,11 +19,21 @@ class EnergyForceDataset:
     """
     Usage:
 
+_ONE_HOT = {
+    'H': [1., 0., 0.],
+    'C': [0., 1., 0.],
+    'O': [0., 0., 1.]
+}
     Load an EnergyForceDataset with 100 structures:
     >>> from solvent import data
     >>> ds = data.EnergyForceDataset('file.json', units='kcal')
     ...     json_file='file.json',
     ...     nstructures=100,
+    ...     one_hot_key={
+    ...         'H': [1., 0., 0.],
+    ...         'C': [0., 1., 0.],
+    ...         'O': [0., 0., 1.]
+    ...     }
     ...     units='kcal'
     ... )
     >>> ds.load()
@@ -50,6 +60,7 @@ class EnergyForceDataset:
             self,
             json_file: str,
             nstructures: int,
+            one_hot_key: Dict,
             units: str = 'HARTREE',
             ncores: Optional[int] = None
         ) -> None:
@@ -67,6 +78,7 @@ class EnergyForceDataset:
         self._natoms = len(self._xyz[0])
         self._nstates = len(self._energies[0])
         self._nstructures = nstructures
+        self._one_hot_key = one_hot_key
         self._is_loaded = False
         self._dataset: List[Data] = []
         self._units = units.upper()
@@ -149,7 +161,12 @@ class EnergyForceDataset:
         return c 
 
     def _load_structure(self, idx: int) -> Data:
-        one_hot_vecs = torch.stack([utils.atom_type_to_one_hot(self._xyz[idx][i][0]) for i in range(self._natoms)], dim=0)
+        one_hot_vecs = torch.stack(
+            [utils.atom_type_to_one_hot(
+                atom_type=self._xyz[idx][i][0],
+                one_hot_key=self._one_hot_key)
+            for i in range(self._natoms)],
+            dim=0)
         coords = torch.Tensor([atom[1:] for atom in self._xyz[idx]])
         shifted_coords = utils.center_coords(coords)
         energies = torch.Tensor(self._energies[idx])

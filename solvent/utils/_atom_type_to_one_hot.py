@@ -5,13 +5,10 @@ STATUS: DEV
 
 import torch
 
-_ONE_HOT = {
-    'H': [1., 0., 0.],
-    'C': [0., 1., 0.],
-    'O': [0., 0., 1.]
-}
+from typing import Dict
 
-def atom_type_to_one_hot(atom_type: str) -> torch.Tensor:
+
+def atom_type_to_one_hot(atom_type: str, one_hot_key: Dict) -> torch.Tensor:
     """
     Converts atom types to one hot vectors.
     *figure out better way to do this
@@ -24,4 +21,4 @@ def atom_type_to_one_hot(atom_type: str) -> torch.Tensor:
         (torch.Tensor): one-hot vector
 
     """
-    return torch.Tensor(_ONE_HOT[atom_type.upper()])
+    return torch.Tensor(one_hot_key[atom_type])

@@ -6,7 +6,14 @@ optional separate files?
 """
 
 import torch
-from torch import optim
+from torch.optim import (
+    Adam,
+    SGD
+)
+from torch.optim.lr_scheduler import (
+    ExponentialLR,
+    ReduceLROnPlateau    
+)
 
 from typing import Dict, TypeVar, Type, Union
 
@@ -48,15 +55,15 @@ class ResumeConfig:
     def __init__(
             self,
             model: torch.nn.Module,
-            optim: Union[optim.Adam, optim.SGD],
-            scheduler: Union[optim.lr_scheduler.ExponentialLR, optim.lr_scheduler.ReduceLROnPlateau],
+            optim: Union[Adam, SGD],
+            scheduler: Union[ExponentialLR, ReduceLROnPlateau],
             model_state_dict: Dict,
             optim_state_dict: Dict,
             scheduler_state_dict: Dict,
             epoch: int
         ) -> None:
         self.model = model.load_state_dict(model_state_dict)
-        model.train()
+        self.model.train() # FIXME: type error
         self.optim = optim.load_state_dict(optim_state_dict)
         self.scheduler = scheduler.load_state_dict(scheduler_state_dict)
         self.epoch = epoch
@@ -65,8 +72,8 @@ class ResumeConfig:
     def deserialize(
             cls: Type[T],
             model: torch.nn.Module,
-            optim: Union[optim.Adam, optim.SGD],
-            scheduler: Union[optim.lr_scheduler.ExponentialLR, optim.lr_scheduler.ReduceLROnPlateau],
+            optim: Union[Adam, SGD],
+            scheduler: Union[ExponentialLR, ReduceLROnPlateau],
             chkpt_file: str,
             key: Dict = _KEY
         ) -> T:

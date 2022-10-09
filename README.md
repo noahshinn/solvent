@@ -6,9 +6,17 @@ Solvent is an open-source code for training highly accurate equivariant deep lea
 ## Installation
 Requires:
 - Python >= 3.7
-- torch >= 1.12+CUDA
 
 To install:
+  * Init virtual env
+  ```
+  python -m venv ./venv
+  source ./venv/bin/activate
+  ```
+  * Install torch with CUDA
+  ```
+  pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
+  ```
   * Install torch-geometric, torch-scatter, torch-cluster
   ```
   pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.12.0+cu116.html
@@ -27,7 +35,7 @@ To install:
   ```
   git clone https://github.com/noahshinn024/solvent.git
   cd solvent
-  python setup.py develop
+  pip install -e .
   ```
 
 ## Authors

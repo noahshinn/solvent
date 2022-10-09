@@ -10,7 +10,15 @@ NSTATES = 3
 
 
 # load dataset from json
-ds = data.EnergyForceDataset(DATA_FILE, nstructures=NSTRUCTURES, units='kcal')
+ds = data.EnergyForceDataset(
+    json_file=DATA_FILE,
+    nstructures=NSTRUCTURES,
+    one_hot_key={
+        'H': [1., 0., 0.],
+        'C': [0., 1., 0.],
+        'O': [0., 0., 1.]
+    },
+    units='kcal')
 ds.load()
 print('loaded dataset')
 
@@ -56,5 +64,5 @@ trainer = train.Trainer(
 print('trainer initialized')
 
 # run training
-print('running training')
+print('running training!')
 trainer.fit()
