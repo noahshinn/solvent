@@ -40,6 +40,12 @@ To install:
   pip install -e .
   ```
 
+To run demo:
+  ```
+  cd ./demo
+  python example_training_from_preload.py
+  ```
+
 ## Authors
 * Noah Shinn
 * Sulin Liu 
