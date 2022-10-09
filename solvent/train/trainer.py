@@ -63,8 +63,8 @@ class Trainer:
             model: torch.nn.Module,
             train_loader: DataLoader,
             test_loader: DataLoader,
-            optim_params: Optional[Dict],
-            scheduler_params: Optional[Dict],
+            optim_params: Optional[Dict] = None,
+            scheduler_params: Optional[Dict] = None,
             energy_contribution: float = 1.0,
             force_contribution: float = 1.0,
             start_epoch: int = 0,
@@ -118,8 +118,8 @@ class Trainer:
             energy_contribution=energy_contribution,
             force_contribution=force_contribution
         )
-        self._logger = logger.Logger(file=log_file)
-        self._logger.log_header(description)
+        self._logger = logger.Logger(file=log_file, is_resume=self._is_resume)
+        self._description = description
         self._walltime = self._srt_time = time.perf_counter()
 
     def _pred(self, structure: Union[Dict, Data]) -> types.EnergyForcePrediction:
@@ -222,9 +222,12 @@ class Trainer:
 
     def fit(self) -> None:
         if not self._is_resume:
-            self._logger.log_header()
+            self._logger.log_header(
+                description=self._description,
+                device=self._device
+            )
         else:
-            self._logger.log_resume()
+            self._logger.log_resume(self._epoch)
         res = self._fit()
         self._logger.log_termination(
             exit_code=res,

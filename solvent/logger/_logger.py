@@ -10,16 +10,21 @@ from solvent import utils
 
 
 class Logger:
-    def __init__(self, file: str) -> None:
+    def __init__(self, file: str, is_resume: bool) -> None:
         self._file = file
         self._performance_queue = utils.PriorityQueue()
-        open(file, 'w').close()
+        if not is_resume:
+            open(file, 'w').close()
 
     def _log(self, msg: str) -> None:
         with open(self._file, 'a') as f:
             f.write(msg)
 
-    def log_header(self, description: str) -> None:
+    def log_header(
+            self,
+            description: str,
+            device: str
+        ) -> None:
         s = f"""
  *---------------------------------------------------*
  |                                                   |
@@ -28,12 +33,18 @@ class Logger:
  *---------------------------------------------------*
 
  Description: {description if description != '' else 'None given'}
+ Device: {device}
 
 """
         self._log(s)
 
-    def log_resume(self) -> None:
-        NotImplemented()
+    def log_resume(self, epoch: int) -> None:
+        s = f"""
+----------- Resume Training -----------
+Epoch: {epoch}
+
+"""
+        self._log(s)
 
     def log_epoch(
             self,
@@ -51,12 +62,12 @@ class Logger:
             'f_test_mae': f_test_mae,
         }, priority=e_test_mae)
         s = f"""EPOCH {epoch}:
-ENERGY TRAIN MAE: {e_train_mae.item()} (eV/molecule)
-ENERGY TEST MAE: {e_test_mae.item()} (eV/molecule)
-FORCE TRAIN MAE: {f_train_mae.item()} (eV/Angstrom)
-FORCE TEST MAE: {f_test_mae.item()} (eV/Angstrom)
-LEARNING RATE: {lr:.5f}
-WALLTIME: {duration:.2f} (s)
+Energy train mae: {e_train_mae.item()} (eV/molecule)
+Energy test mae: {e_test_mae.item()} (eV/molecule)
+Force train mae: {f_train_mae.item()} (eV/Angstrom)
+Force test mae: {f_test_mae.item()} (eV/Angstrom)
+Learning rate: {lr:.5f}
+Wall time: {duration:.2f} (s)
 
 """
         self._log(s)
@@ -70,9 +81,9 @@ WALLTIME: {duration:.2f} (s)
         while n > 0:
             p = self._performance_queue.pop()
             s += f"""
-EPOCH: {p['epoch']}
-ENERGY TEST MAE: {p['e_test_mae']}
-FORCE TEST MAE: {p['f_test_mae']}
+Epoch: {p['epoch']}
+Energy test mae: {p['e_test_mae']}
+Force test mae: {p['f_test_mae']}
 
 """
             n -= 1

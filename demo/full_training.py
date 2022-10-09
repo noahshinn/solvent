@@ -1,6 +1,4 @@
-import torch
-
-from solvent import models, utils, train, data
+from solvent import models, train, data
 
 DATA_FILE = 'new-data.json'
 NSTRUCTURES = 10
@@ -33,7 +31,24 @@ model = models.Model(
     irreps_in=f'{NATOMS}x0e',
     hidden_sizes=[125, 40, 25, 15],
     irreps_out=f'{NSTATES}x0e',
+    nlayers=3,
+    max_radius=4.6,
+    nbasis_funcs=8,
+    nradial_layers=2,
+    nradial_neurons=128,
+    navg_neighbors=16.0,
+    cache=None
 )
 
-trainer = train.Trainer(model, train_loader, test_loader) # type: ignore
+# initialize trainer
+trainer = train.Trainer(
+    model=model,
+    train_loader=train_loader,
+    test_loader=test_loader,
+    energy_contribution=1.0,
+    force_contribution=25.0,
+    description='test run'
+)
+
+# run training
 trainer.fit()
