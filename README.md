@@ -13,11 +13,11 @@ To install:
   python -m venv ./venv
   source ./venv/bin/activate
   ```
-  * Install torch with CUDA
+  * Install [torch](https://pytorch.org/) with CUDA
   ```
   pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
   ```
-  * Install torch-geometric, torch-scatter, torch-cluster
+  * Install [torch-geometric](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html), [torch-scatter](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html), [torch-cluster](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html)
   ```
   pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.12.0+cu116.html
   ```
@@ -25,11 +25,11 @@ To install:
   ```
   pip install e3nn
   ```
-  * Install joblib for multiprocessing
+  * Install [joblib](https://joblib.readthedocs.io/en/latest/installing.html) for multiprocessing
   ```
   pip install joblib
   ```
-  * Install yaml for alternate config
+  * Install [yaml](https://pypi.org/project/PyYAML/) for alternate config
   ```
   pip install pyyaml
   ```
