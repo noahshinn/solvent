@@ -8,14 +8,14 @@ Requires:
 - Python >= 3.7
 
 To install:
-  * Init virtual env
+  * Create virtual environment
   ```
-  python -m venv ./venv
-  source ./venv/bin/activate
+  python -m venv ./solvent_venv
+  source ./solvent_venv/bin/activate
   ```
-  * Install [torch](https://pytorch.org/) with CUDA
+  * Install [torch](https://pytorch.org/) (nightly build for vmap) with CUDA
   ```
-  pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
+  pip install --pre torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cu116
   ```
   * Install [torch-geometric](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html), [torch-scatter](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html), [torch-cluster](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html)
   ```
