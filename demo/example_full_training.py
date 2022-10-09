@@ -6,6 +6,7 @@ BATCH_SIZE = 1
 SPLIT = 0.9
 
 NATOMS = 51
+NATOM_TYPES = 3
 NSTATES = 3
 
 
@@ -39,7 +40,7 @@ print('loaders')
 
 # initialize model
 model = models.Model(
-    irreps_in=f'{NATOMS}x0e',
+    irreps_in=f'{NATOM_TYPES}x0e',
     hidden_sizes=[125, 40, 25, 15],
     irreps_out=f'{NSTATES}x0e',
     nlayers=3,
