@@ -4,6 +4,7 @@ Solvent is an open-source code for training highly accurate equivariant deep lea
 **PLEASE NOTE:** the Solvent code is still under active development.
 
 ## Installation
+Requires:
 - Python >= 3.7
 - torch >= 1.12+CUDA
 
