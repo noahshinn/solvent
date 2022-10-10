@@ -4,13 +4,12 @@
 **dist
 
 **_temp/
-**nn_save/
+**temp/
 
 **todo.txt
 dev_guide.txt
 **train.py
 **constants.py
-**.log
 **.json
 
 # Byte-compiled / optimized / DLL files
