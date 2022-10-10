@@ -6,6 +6,7 @@ Solvent is an open-source code for training highly accurate equivariant deep lea
 ## Installation
 Requires:
 - Python >= 3.7
+- CUDA >= 11.6
 
 To install:
   * Create virtual environment
@@ -13,7 +14,19 @@ To install:
   python -m venv ./solvent_venv
   source ./solvent_venv/bin/activate
   ```
-  * Install [torch](https://pytorch.org/) (nightly build for vmap) with CUDA
+  * Install [CUDA](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) v11.6
+  ```
+  wget https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda-repo-rhel7-11-6-local-11.6.0_510.39.01-1.x86_64.rpm
+  sudo rpm -i cuda-repo-rhel7-11-6-local-11.6.0_510.39.01-1.x86_64.rpm
+  sudo yum clean all
+  sudo yum -y install nvidia-driver-latest-dkms cuda
+  sudo yum -y install cuda-drivers
+  ```
+  * Install [torch](https://pytorch.org/) with CUDA
+  ```
+  pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
+  ```
+  * Install [torch](https://pytorch.org/) - nightly build for vmap - with CUDA (optional)
   ```
   pip install --pre torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cu116
   ```
