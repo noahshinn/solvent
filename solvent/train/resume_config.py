@@ -62,11 +62,25 @@ class ResumeConfig:
             scheduler_state_dict: Dict,
             epoch: int
         ) -> None:
+        """
+        Args:
+            model (torch.nn.Module): Model architecture.
+            optim (Union[Adam, SGD]): Optimizer architecture.
+            scheduler (Union[ExponentialLR, ReduceLROnPlateau]): Scheduler architecture.
+            model_state_dict (Dict): Saved model parameters.
+            optim_state_dict (Dict): Saved optimizer parameters.
+            scheduler_state_dict (Dict): Saved scheduler parameters.
+            epoch (int): The last epoch before training terminated.
+
+        Returns:
+            (None)
+
+        """
         self.model = model.load_state_dict(model_state_dict)
         self.model.train() # FIXME: type error
         self.optim = optim.load_state_dict(optim_state_dict)
         self.scheduler = scheduler.load_state_dict(scheduler_state_dict)
-        self.epoch = epoch
+        self.epoch = epoch + 1
     
     @classmethod
     def deserialize(
@@ -77,6 +91,30 @@ class ResumeConfig:
             chkpt_file: str,
             key: Dict = _KEY
         ) -> T:
+        """
+        Deserializes checkpoint file.
+
+        Args:
+            model (torch.nn.Module): Model architecture.
+            optim (Union[Adam, SGD]): Optimizer architecture.
+            scheduler (Union[ExponentialLR, ReduceLROnPlateau]): Scheduler architecture.
+            chkpt_file (str): Checkpoint file.
+            key (Dict): Decode key for the checkpoint file.
+                *default: 
+                    key = {
+                        'model': 'model',
+                        'optim': 'optim',
+                        'scheduler': 'scheduler',
+                        'epoch': 'epoch'
+                    }
+
+        Returns:
+            (ResumeConfig): An instance of ResumeConfig.
+
+        Asserts:
+            - checkpoint file extension is .pt
+
+        """
         assert chkpt_file.endswith('.pt')
         d = torch.load(chkpt_file)
         return cls(

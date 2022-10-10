@@ -1,5 +1,5 @@
 """
-STATUS: FINISHED
+STATUS: NOT TESTED
 
 """
 
@@ -14,12 +14,11 @@ def read_yaml(file: str) -> Dict:
     Reads a yml file and returns a Python dictionary.
 
     Args:
-        file (str): yml file
+        file (str): .yml file.
 
     Returns:
         (Dict): Data dictionary
 
     """
     assert file.endswith('.yml')
-
     return yaml.safe_load(Path(file).read_text())['instance']

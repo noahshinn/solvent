@@ -153,11 +153,35 @@ class Trainer:
         self._walltime = self._srt_time = time.perf_counter()
 
     def _pred(self, structure: Union[Dict, Data]) -> EnergyForcePrediction:
+        """
+        TODO
+
+        Args:
+            structure (Union[Dict, Data]): TODO
+
+        Returns:
+            TODO (EnergyForcePrediction): TODO
+
+        """
         e = self._model(structure)
         f = force_grad(e, structure['pos'], self._device)
         return EnergyForcePrediction(e, f)
 
     def _evaluate(self, loader: DataLoader, mode: str) -> QMPredMAE:
+        """
+        TODO
+
+        Args:
+            loader (DataLoader): TODO
+            mode (str): TODO
+
+        Returns:
+            TODO (QMPredMAE): TODO
+
+        Asserts:
+             -
+
+        """
         assert mode == 'TRAIN' or mode == 'TEST'
         for structure in loader:
             structure['pos'].requires_grad = True
@@ -183,6 +207,19 @@ class Trainer:
             f_train_mae: torch.Tensor,
             f_test_mae: torch.Tensor,
         ) -> None:
+        """
+        TODO
+
+        Args:
+            e_train_mae (torch.Tensor): TODO
+            e_test_mae (torch.Tensor): TODO
+            f_train_mae (torch.Tensor): TODO
+            f_test_mae (torch.Tensor): TODO
+
+        Returns:
+            TODO (None): TODO
+
+        """
         self._logger.log_epoch(
             epoch=self._epoch,
             lr=self._lr,
@@ -194,11 +231,31 @@ class Trainer:
         )
 
     def _step(self, loss: torch.Tensor) -> None:
+        """
+        TODO
+
+        Args:
+            loss (torch.Tensor): TODO
+
+        Returns:
+            TODO (None): TODO
+
+        """
         loss.backward()
         self._optim.step()
         self._optim.zero_grad()
         
     def _update(self, loss: torch.Tensor) -> None:
+        """
+        TODO
+
+        Args:
+            loss (torch.Tensor): TODO
+
+        Returns:
+            TODO (None): TODO
+
+        """
         self._walltime = time.perf_counter()
         if isinstance(self._scheduler, ReduceLROnPlateau):
             self._scheduler.step(metrics=loss)
@@ -210,6 +267,16 @@ class Trainer:
         self._lr = self._optim.param_groups[0]['lr']
 
     def _chkpt(self) -> None:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (None): TODO
+
+        """
         save_path = os.path.join(self._log_dir, f'{str(self._epoch)}.pt')
         chkpt = {
             'model': self._model.state_dict(),
@@ -222,6 +289,16 @@ class Trainer:
         self._cur_chkpt_count = 0
 
     def _should_terminate(self) -> bool:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (bool): TODO
+
+        """
         if self._epoch >= 10000:
             self._exit_code = 'MAX EPOCH'
             return True
@@ -234,6 +311,16 @@ class Trainer:
         return False
 
     def _fit(self) -> str:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (str): TODO
+
+        """
         while not self._should_terminate():
             e_train_mae, f_train_mae = self._evaluate(loader=self._train_loader, mode='TRAIN')
             e_test_mae, f_test_mae = self._evaluate(loader=self._test_loader, mode='TEST')
@@ -253,6 +340,16 @@ class Trainer:
         return self._exit_code
 
     def fit(self) -> None:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (None): TODO
+
+        """
         if not self._is_resume:
             self._logger.log_header(
                 description=self._description,

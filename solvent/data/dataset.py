@@ -168,7 +168,7 @@ class EnergyForceDataset:
     def _load_structure(self, idx: int) -> Data:
         one_hot_vecs = torch.stack(
             [atom_type_to_one_hot(
-                atom_type=self._xyz[idx][i][0],
+                species=self._xyz[idx][i][0],
                 one_hot_key=self._one_hot_key)
             for i in range(self._natoms)],
             dim=0)

@@ -4,63 +4,49 @@ Generates function docstring templates for all python files.
 
 """
 
-import os
+import sys
 import ast
+import subprocess
 from astor import to_source
 
-_DIR = '../solvent'
-_EXT = '.py'
-_EXCLUDE = ['__init__.py']
+assert len(sys.argv) == 2
+FILE = sys.argv[1]
 
 
-def gen_doc() -> str:
+def _gen_doc(args: ast.arguments, returns: ast.Return) -> str:
+    l = len(args.args)
+    arg_s = ''
+    for i, a in enumerate(args.args):
+        if a.annotation is None:
+            continue
+        p = to_source(a.annotation).replace("\n", '')
+        arg_s += f'            {a.arg} ({p}): TODO' # type: ignore
+        if i != l - 1:
+            arg_s += '\n'
+    r = to_source(returns).replace('\n', '')
     triple_quote = '"""'
-    s = f"""\n    {triple_quote}
-    TODO
+    s = f"""        {triple_quote}
+        TODO
     
-    Args:
-        TODO (TODO): TODO
+        Args:
+{arg_s}
           
-    Returns:
-         TODO (TODO): TODO
+        Returns:
+            TODO ({r}): TODO
 
-    {triple_quote}"""
+        {triple_quote}"""
     return s
 
-
-class Visitor(ast.NodeTransformer):
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.FunctionDef:
-        if ast.get_docstring(node) is None:
-            new_func = ast.FunctionDef()
-            new_func.decorator_list = node.decorator_list
-            new_func.name = node.name
-            new_func.args = node.args
-            new_func.body = node.body
-            new_func.returns = node.returns
-            docstring = gen_doc()
-            new_func.body.insert(0, docstring) # type: ignore
-            ast.NodeVisitor.generic_visit(self, new_func)
-            return new_func
-        return node
-
-def write_func(node_visitor: Visitor, func: ast.FunctionDef) -> str:
-    return node_visitor.visit(func)
-
-def main() -> None:
-    node_visitor = Visitor()
-    for subdir, dirs, files in os.walk(_DIR):
-        for file in files:
-            if file.endswith(_EXT) and file not in _EXCLUDE:
-                path = os.path.join(subdir, file)
-                with open(path, 'r') as f:
-                    code = f.read()
-                    tree = ast.parse(code)
-                    for c in ast.walk(tree):
-                        if isinstance(c, ast.FunctionDef):
-                            c = write_func(node_visitor, c)
-                    new_code = to_source(tree).replace('->', '-> ')
-                    with open('temp.py', 'w') as write_file:
-                        write_file.write(new_code)
+def gen_doc(file: str) -> None:
+    with open(file, 'r') as f:
+        code = f.read()
+        tree = ast.parse(code)
+        for c in ast.walk(tree):
+            if isinstance(c, ast.FunctionDef):
+                docstring = _gen_doc(c.args, c.returns) # type: ignore
+                # subprocess.run("pbcopy", universal_newlines=True, input=docstring)
+                print(docstring)
+                
 
 if __name__ == '__main__':
-    main()
+    gen_doc(FILE)

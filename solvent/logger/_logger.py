@@ -17,6 +17,17 @@ class Logger:
             is_resume: bool,
             units: str = 'hartrees'
         ) -> None:
+        """
+        Args:
+            log_dir (str): Logging root directory.
+            is_resume (bool): Determines if the respective training has started
+                from a previous checkpoint.
+            units (str): Unit of energy.
+
+        Returns:
+            (None)
+
+        """
         assert units.lower() == 'hartree' \
             or units.lower() == 'hartrees' \
             or units.lower() == 'ev' \
@@ -35,6 +46,16 @@ class Logger:
             open(self._file, 'w').close()
 
     def _log(self, msg: str) -> None:
+        """
+        Logs a message to the log file.
+
+        Args:
+            msg (str): Message to log.
+
+        Returns:
+            (None)
+
+        """
         with open(self._file, 'a') as f:
             f.write(msg)
 
@@ -43,6 +64,17 @@ class Logger:
             description: str,
             device: str
         ) -> None:
+        """
+        Logs the header.
+
+        Args:
+            description (str): Description of the training given from the trainer.
+            device (str): The device on which the training is occurring.
+
+        Returns:
+            (None)
+
+        """
         s = f"""
  *---------------------------------------------------*
  |                                                   |
@@ -57,6 +89,16 @@ class Logger:
         self._log(s)
 
     def log_resume(self, epoch: int) -> None:
+        """
+        Logs the start of a training from a checkpoint.
+
+        Args:
+            epoch (int): Resume epoch
+
+        Returns:
+            (None)
+
+        """
         s = f"""
 ----------- Resume Training -----------
 Epoch: {epoch}
@@ -74,6 +116,22 @@ Epoch: {epoch}
             f_test_mae: torch.Tensor,
             duration: float
         ) -> None:
+        """
+        Logs a message after an epoch is complete.
+
+        Args:
+            epoch (int): Current training epoch.
+            lr (float): Current learning rate.
+            e_train_mae (torch.Tensor): Train energy MAE.
+            e_test_mae (torch.Tensor): Test energy MAE.
+            f_train_mae (torch.Tensor): Train force MAE.
+            f_test_mae (torch.Tensor): Test force MAE.
+            duration (float): Elapsed wall time for the given epoch.
+
+        Returns:
+            (None)
+
+        """
         self._performance_queue.push({
             'epoch': epoch,
             'e_test_mae': e_test_mae,
@@ -91,9 +149,29 @@ Wall time: {duration:.2f} (s)
         self._log(s)
 
     def log_chkpt(self, path: str) -> None:
+        """
+        Logs a message after a set of checkpoint parameters are saved.
+
+        Args:
+            path (str): The path to the file.
+
+        Returns:
+            (None)
+
+        """
         self._log(f'Checkpoint saved to {path}\n\n')
 
     def _format_best_params(self) -> str:
+        """
+        Formats the log message for the top 5 model performances.
+
+        Args:
+            None 
+
+        Returns:
+            s (str): Message to log.
+
+        """
         s = ''
         n = 5
         while n > 0:
@@ -108,6 +186,17 @@ Force test mae: {p['f_test_mae']}
         return s
 
     def log_termination(self, exit_code: str, duration: float) -> None:
+        """
+        Logs a message after a training session is complete.
+
+        Args:
+            exit_code (str): One of 'MAX EPOCH' | 'WALL TIME' | 'LR'
+            duration (float): Wall time for the entire training.
+
+        Returns:
+            (None)
+
+        """
         t_s = str(datetime.timedelta(seconds=duration)).split(':')
         best_param_s = self._format_best_params()
         s = f"""

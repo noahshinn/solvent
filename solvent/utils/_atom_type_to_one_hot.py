@@ -1,24 +1,29 @@
 """
-STATUS: DEV
+STATUS: NOT TESTED
 
 """
 
 import torch
 
-from typing import Dict
+from typing import Dict, List
 
 
-def atom_type_to_one_hot(atom_type: str, one_hot_key: Dict) -> torch.Tensor:
+def atom_type_to_one_hot(
+        species: str,
+        one_hot_key: Dict[str, List[float]]
+    ) -> torch.Tensor:
     """
-    Converts atom types to one hot vectors.
-    *figure out better way to do this
-    *limited to 3 atoms: hydrogen, carbon, and oxygen
+    Converts chemical species strings to one hot vectors.
+    
+    Sample key for H2O: {'H': [1., 0.], 'O': [0., 1.]}
 
     Args:
-        atom_type (str): element abbreviation
+        species (str): Element abbreviation.
+        one_hot_key (dict(str, list(float))): Key to encode chemical species
+            to one-hot vectors.
 
     Returns:
         (torch.Tensor): one-hot vector
 
     """
-    return torch.Tensor(one_hot_key[atom_type])
+    return torch.Tensor(one_hot_key[species])
