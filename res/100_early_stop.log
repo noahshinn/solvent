@@ -1,0 +1,330 @@
+
+ *---------------------------------------------------*
+ |                                                   |
+ |               Neural Network Training             |
+ |                                                   |
+ *---------------------------------------------------*
+
+ Description: cyclopropenone in a 15 water solvent: full training
+ Device: cuda:0
+
+EPOCH 0:
+Energy train mae: 3.375181198120117 (kcal/mol/molecule)
+Energy test mae: 3.0668017864227295 (kcal/mol/molecule)
+Force train mae: 13.528265953063965 (kcal/mol/Angstrom)
+Force test mae: 13.342181205749512 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 39.91 (s)
+
+Checkpoint saved to cyp-train/1.pt
+
+EPOCH 1:
+Energy train mae: 0.6670534014701843 (kcal/mol/molecule)
+Energy test mae: 0.6948066353797913 (kcal/mol/molecule)
+Force train mae: 11.565146446228027 (kcal/mol/Angstrom)
+Force test mae: 11.561626434326172 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.36 (s)
+
+Checkpoint saved to cyp-train/2.pt
+
+EPOCH 2:
+Energy train mae: 0.6084604859352112 (kcal/mol/molecule)
+Energy test mae: 0.5873571634292603 (kcal/mol/molecule)
+Force train mae: 11.425863265991211 (kcal/mol/Angstrom)
+Force test mae: 11.429363250732422 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 30.69 (s)
+
+Checkpoint saved to cyp-train/3.pt
+
+EPOCH 3:
+Energy train mae: 0.600594162940979 (kcal/mol/molecule)
+Energy test mae: 0.6806223392486572 (kcal/mol/molecule)
+Force train mae: 11.353589057922363 (kcal/mol/Angstrom)
+Force test mae: 11.348246574401855 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 29.79 (s)
+
+Checkpoint saved to cyp-train/4.pt
+
+EPOCH 4:
+Energy train mae: 0.547458827495575 (kcal/mol/molecule)
+Energy test mae: 0.5207170248031616 (kcal/mol/molecule)
+Force train mae: 11.481127738952637 (kcal/mol/Angstrom)
+Force test mae: 11.484151840209961 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 29.73 (s)
+
+Checkpoint saved to cyp-train/5.pt
+
+EPOCH 5:
+Energy train mae: 0.43986478447914124 (kcal/mol/molecule)
+Energy test mae: 0.42644816637039185 (kcal/mol/molecule)
+Force train mae: 11.577571868896484 (kcal/mol/Angstrom)
+Force test mae: 11.58777904510498 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 29.93 (s)
+
+Checkpoint saved to cyp-train/6.pt
+
+EPOCH 6:
+Energy train mae: 0.42661193013191223 (kcal/mol/molecule)
+Energy test mae: 0.42490553855895996 (kcal/mol/molecule)
+Force train mae: 11.701711654663086 (kcal/mol/Angstrom)
+Force test mae: 11.691154479980469 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.41 (s)
+
+Checkpoint saved to cyp-train/7.pt
+
+EPOCH 7:
+Energy train mae: 0.4014770984649658 (kcal/mol/molecule)
+Energy test mae: 0.40152251720428467 (kcal/mol/molecule)
+Force train mae: 11.771652221679688 (kcal/mol/Angstrom)
+Force test mae: 11.766080856323242 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.52 (s)
+
+Checkpoint saved to cyp-train/8.pt
+
+EPOCH 8:
+Energy train mae: 0.46173641085624695 (kcal/mol/molecule)
+Energy test mae: 0.4717954695224762 (kcal/mol/molecule)
+Force train mae: 11.694986343383789 (kcal/mol/Angstrom)
+Force test mae: 11.687143325805664 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.29 (s)
+
+Checkpoint saved to cyp-train/9.pt
+
+EPOCH 9:
+Energy train mae: 0.35108548402786255 (kcal/mol/molecule)
+Energy test mae: 0.344237357378006 (kcal/mol/molecule)
+Force train mae: 11.78476333618164 (kcal/mol/Angstrom)
+Force test mae: 11.759515762329102 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.35 (s)
+
+Checkpoint saved to cyp-train/10.pt
+
+EPOCH 10:
+Energy train mae: 0.34413614869117737 (kcal/mol/molecule)
+Energy test mae: 0.3457864224910736 (kcal/mol/molecule)
+Force train mae: 11.784748077392578 (kcal/mol/Angstrom)
+Force test mae: 11.777074813842773 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.45 (s)
+
+Checkpoint saved to cyp-train/11.pt
+
+EPOCH 11:
+Energy train mae: 0.3879179358482361 (kcal/mol/molecule)
+Energy test mae: 0.38338717818260193 (kcal/mol/molecule)
+Force train mae: 11.867597579956055 (kcal/mol/Angstrom)
+Force test mae: 11.841022491455078 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.47 (s)
+
+Checkpoint saved to cyp-train/12.pt
+
+EPOCH 12:
+Energy train mae: 0.30883151292800903 (kcal/mol/molecule)
+Energy test mae: 0.3194939196109772 (kcal/mol/molecule)
+Force train mae: 11.926142692565918 (kcal/mol/Angstrom)
+Force test mae: 11.892520904541016 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.36 (s)
+
+Checkpoint saved to cyp-train/13.pt
+
+EPOCH 13:
+Energy train mae: 0.34457412362098694 (kcal/mol/molecule)
+Energy test mae: 0.3449411988258362 (kcal/mol/molecule)
+Force train mae: 11.962669372558594 (kcal/mol/Angstrom)
+Force test mae: 11.929525375366211 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.45 (s)
+
+Checkpoint saved to cyp-train/14.pt
+
+EPOCH 14:
+Energy train mae: 0.30767491459846497 (kcal/mol/molecule)
+Energy test mae: 0.30298686027526855 (kcal/mol/molecule)
+Force train mae: 11.903721809387207 (kcal/mol/Angstrom)
+Force test mae: 11.854537010192871 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.62 (s)
+
+Checkpoint saved to cyp-train/15.pt
+
+EPOCH 15:
+Energy train mae: 0.34406277537345886 (kcal/mol/molecule)
+Energy test mae: 0.3330847918987274 (kcal/mol/molecule)
+Force train mae: 11.732977867126465 (kcal/mol/Angstrom)
+Force test mae: 11.70347785949707 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.73 (s)
+
+Checkpoint saved to cyp-train/16.pt
+
+EPOCH 16:
+Energy train mae: 0.2600395083427429 (kcal/mol/molecule)
+Energy test mae: 0.254533588886261 (kcal/mol/molecule)
+Force train mae: 11.871269226074219 (kcal/mol/Angstrom)
+Force test mae: 11.826942443847656 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.82 (s)
+
+Checkpoint saved to cyp-train/17.pt
+
+EPOCH 17:
+Energy train mae: 0.2644476592540741 (kcal/mol/molecule)
+Energy test mae: 0.25362446904182434 (kcal/mol/molecule)
+Force train mae: 11.964788436889648 (kcal/mol/Angstrom)
+Force test mae: 11.91710376739502 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.80 (s)
+
+Checkpoint saved to cyp-train/18.pt
+
+EPOCH 18:
+Energy train mae: 0.2821023464202881 (kcal/mol/molecule)
+Energy test mae: 0.2676091194152832 (kcal/mol/molecule)
+Force train mae: 12.0160551071167 (kcal/mol/Angstrom)
+Force test mae: 11.957535743713379 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.84 (s)
+
+Checkpoint saved to cyp-train/19.pt
+
+EPOCH 19:
+Energy train mae: 0.2699166536331177 (kcal/mol/molecule)
+Energy test mae: 0.26028376817703247 (kcal/mol/molecule)
+Force train mae: 11.957499504089355 (kcal/mol/Angstrom)
+Force test mae: 11.899041175842285 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.85 (s)
+
+Checkpoint saved to cyp-train/20.pt
+
+EPOCH 20:
+Energy train mae: 0.22488518059253693 (kcal/mol/molecule)
+Energy test mae: 0.22379818558692932 (kcal/mol/molecule)
+Force train mae: 11.969449043273926 (kcal/mol/Angstrom)
+Force test mae: 11.908675193786621 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.89 (s)
+
+Checkpoint saved to cyp-train/21.pt
+
+EPOCH 21:
+Energy train mae: 0.20601479709148407 (kcal/mol/molecule)
+Energy test mae: 0.2064199447631836 (kcal/mol/molecule)
+Force train mae: 12.022271156311035 (kcal/mol/Angstrom)
+Force test mae: 11.965902328491211 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.77 (s)
+
+Checkpoint saved to cyp-train/22.pt
+
+EPOCH 22:
+Energy train mae: 0.2669528126716614 (kcal/mol/molecule)
+Energy test mae: 0.2674933969974518 (kcal/mol/molecule)
+Force train mae: 12.005669593811035 (kcal/mol/Angstrom)
+Force test mae: 11.942801475524902 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.96 (s)
+
+Checkpoint saved to cyp-train/23.pt
+
+EPOCH 23:
+Energy train mae: 0.2283313274383545 (kcal/mol/molecule)
+Energy test mae: 0.23094989359378815 (kcal/mol/molecule)
+Force train mae: 12.034839630126953 (kcal/mol/Angstrom)
+Force test mae: 11.959334373474121 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.90 (s)
+
+Checkpoint saved to cyp-train/24.pt
+
+EPOCH 24:
+Energy train mae: 0.23288989067077637 (kcal/mol/molecule)
+Energy test mae: 0.2408437877893448 (kcal/mol/molecule)
+Force train mae: 12.010477066040039 (kcal/mol/Angstrom)
+Force test mae: 11.94748306274414 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.89 (s)
+
+Checkpoint saved to cyp-train/25.pt
+
+EPOCH 25:
+Energy train mae: 0.20623162388801575 (kcal/mol/molecule)
+Energy test mae: 0.22536210715770721 (kcal/mol/molecule)
+Force train mae: 12.061636924743652 (kcal/mol/Angstrom)
+Force test mae: 12.00285530090332 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 32.03 (s)
+
+Checkpoint saved to cyp-train/26.pt
+
+EPOCH 26:
+Energy train mae: 0.2462957799434662 (kcal/mol/molecule)
+Energy test mae: 0.23906759917736053 (kcal/mol/molecule)
+Force train mae: 12.045967102050781 (kcal/mol/Angstrom)
+Force test mae: 11.981654167175293 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.98 (s)
+
+Checkpoint saved to cyp-train/27.pt
+
+EPOCH 27:
+Energy train mae: 0.2079465687274933 (kcal/mol/molecule)
+Energy test mae: 0.2085549533367157 (kcal/mol/molecule)
+Force train mae: 12.020427703857422 (kcal/mol/Angstrom)
+Force test mae: 11.951743125915527 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 32.10 (s)
+
+Checkpoint saved to cyp-train/28.pt
+
+EPOCH 28:
+Energy train mae: 0.220101460814476 (kcal/mol/molecule)
+Energy test mae: 0.22178785502910614 (kcal/mol/molecule)
+Force train mae: 12.088428497314453 (kcal/mol/Angstrom)
+Force test mae: 12.012113571166992 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 32.10 (s)
+
+Checkpoint saved to cyp-train/29.pt
+
+EPOCH 29:
+Energy train mae: 0.24120086431503296 (kcal/mol/molecule)
+Energy test mae: 0.23775362968444824 (kcal/mol/molecule)
+Force train mae: 11.937446594238281 (kcal/mol/Angstrom)
+Force test mae: 11.883012771606445 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.96 (s)
+
+Checkpoint saved to cyp-train/30.pt
+
+EPOCH 30:
+Energy train mae: 0.19806861877441406 (kcal/mol/molecule)
+Energy test mae: 0.21814879775047302 (kcal/mol/molecule)
+Force train mae: 12.063882827758789 (kcal/mol/Angstrom)
+Force test mae: 11.993477821350098 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.88 (s)
+
+Checkpoint saved to cyp-train/31.pt
+
+EPOCH 31:
+Energy train mae: 0.18956716358661652 (kcal/mol/molecule)
+Energy test mae: 0.1943221539258957 (kcal/mol/molecule)
+Force train mae: 12.07628059387207 (kcal/mol/Angstrom)
+Force test mae: 12.008951187133789 (kcal/mol/Angstrom)
+Learning rate: 0.01000
+Wall time: 31.79 (s)
+
+Checkpoint saved to cyp-train/32.pt
+
