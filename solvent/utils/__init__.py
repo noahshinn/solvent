@@ -11,6 +11,7 @@ from ._flatten import flatten
 from ._atom_type_to_one_hot import atom_type_to_one_hot
 from ._center_coords import center_coords
 from ._priority_queue import PriorityQueue
+from ._exit_handler import set_exit_handler
 
 from ._exceptions import (
     DataNotLoadedException,

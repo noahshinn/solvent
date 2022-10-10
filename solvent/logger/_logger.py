@@ -163,7 +163,7 @@ Wall time: {duration:.2f} (s)
 
     def _format_best_params(self) -> str:
         """
-        Formats the log message for the top 5 model performances.
+        Formats the log message for up to the top 5 model performances.
 
         Args:
             None 
@@ -174,7 +174,7 @@ Wall time: {duration:.2f} (s)
         """
         s = ''
         n = 5
-        while n > 0:
+        while n > 0 and not self._performance_queue.isEmpty():
             p = self._performance_queue.pop()
             s += f"""
 Epoch: {p['epoch']}
@@ -184,6 +184,31 @@ Force test mae: {p['f_test_mae']}
 """
             n -= 1
         return s
+
+    def log_premature_termination(self) -> None:
+        """
+        Logs a message after a premature termination.
+        *activated with CTRL+C
+
+        Args:
+            None
+
+        Returns:
+            (None)
+
+        """
+        best_param_s = self._format_best_params()
+        s = f"""
+Training completed with exit code: PREMATURE EXIT
+
+* Best parameter sets *
+
+{best_param_s}
+
+*** TERMINATED ***
+
+"""
+        self._log(s)
 
     def log_termination(self, exit_code: str, duration: float) -> None:
         """

@@ -17,7 +17,7 @@ from torch.optim.lr_scheduler import (
 
 from solvent import constants
 from solvent.nn import EnergyForceLoss, force_grad
-from solvent.utils import InvalidFileType
+from solvent.utils import InvalidFileType, set_exit_handler
 from solvent.logger import Logger
 from solvent.types import EnergyForcePrediction, QMPredMAE
 
@@ -120,6 +120,7 @@ class Trainer:
         if not scheduler is None:
             self._scheduler = scheduler
         else:
+            # TODO: move to init args
             self._scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
                 optimizer=self._optim,
                 mode='min',
@@ -154,13 +155,24 @@ class Trainer:
 
     def _pred(self, structure: Union[Dict, Data]) -> EnergyForcePrediction:
         """
-        TODO
+        Evaluates the model.
+
+        N: Number of atoms in the system.
+        M: Number of unique chemical species types
+        K: Number of electronic states.
 
         Args:
-            structure (Union[Dict, Data]): TODO
+            structure (Union[Dict, Data]): An atomic system represented as either
+                a Python dictionary or torch-geometric Data object with the following
+                data fields:
+                    `x`: one-hot vector of size (M)
+                    `pos`: coordinates of size (N, 3)
+                    `energies`: energy vector of size (K)
+                    `forces`: force vector of size (K, N, 3)
 
         Returns:
-            TODO (EnergyForcePrediction): TODO
+            e (torch.Tensor), f (torch.Tensor): energy and force tensor of size (K)
+                and (K, N, 3), respectively
 
         """
         e = self._model(structure)
@@ -169,17 +181,18 @@ class Trainer:
 
     def _evaluate(self, loader: DataLoader, mode: str) -> QMPredMAE:
         """
-        TODO
+        Full pass through a data set.
 
         Args:
-            loader (DataLoader): TODO
-            mode (str): TODO
+            loader (DataLoader): An iterable for a series of structures.
+            mode (str): One of 'TRAIN' or 'TEST'
 
         Returns:
-            TODO (QMPredMAE): TODO
+            e_mae (torch.Tensor), f_mae (torch.Tensor): Energy force mean absolute
+                error.
 
         Asserts:
-             -
+            - `mode` is one of 'TRAIN' or 'TEST'
 
         """
         assert mode == 'TRAIN' or mode == 'TEST'
@@ -197,7 +210,6 @@ class Trainer:
                 self._step(loss=self._loss.compute_loss())
 
         e_mae, f_mae = self._loss.compute_metrics()
-
         return QMPredMAE(e_mae, f_mae)
 
     def _log_metrics(
@@ -208,16 +220,19 @@ class Trainer:
             f_test_mae: torch.Tensor,
         ) -> None:
         """
-        TODO
+        Formats the energy and force metrics for proper logging.
+            - scales the energy error according to the number of molecules in
+                the system
+            - returns the energy and force in terms of the given unit of energy
 
         Args:
-            e_train_mae (torch.Tensor): TODO
-            e_test_mae (torch.Tensor): TODO
-            f_train_mae (torch.Tensor): TODO
-            f_test_mae (torch.Tensor): TODO
+            e_train_mae (torch.Tensor): Train set energy mean absolute error.
+            e_test_mae (torch.Tensor): Test set energy mean absolute error.
+            f_train_mae (torch.Tensor): Train set force mean absolute error.
+            f_test_mae (torch.Tensor): Test set force mean absolute error.
 
         Returns:
-            TODO (None): TODO
+            (None)
 
         """
         self._logger.log_epoch(
@@ -232,13 +247,14 @@ class Trainer:
 
     def _step(self, loss: torch.Tensor) -> None:
         """
-        TODO
+        Propagates the training by one step.
+        * only called during mode='TRAIN'
 
         Args:
-            loss (torch.Tensor): TODO
+            loss (torch.Tensor): Loss tensor from forward pass.
 
         Returns:
-            TODO (None): TODO
+            (None)
 
         """
         loss.backward()
@@ -247,13 +263,15 @@ class Trainer:
         
     def _update(self, loss: torch.Tensor) -> None:
         """
-        TODO
+        Updates after every epoch.
+            - resets wall time
+        
 
         Args:
-            loss (torch.Tensor): TODO
+            loss (torch.Tensor): Loss tensor from forward pass
 
         Returns:
-            TODO (None): TODO
+            (None): TODO
 
         """
         self._walltime = time.perf_counter()
@@ -318,7 +336,7 @@ class Trainer:
             None
 
         Returns:
-            TODO (str): TODO
+            (str): exit code
 
         """
         while not self._should_terminate():
@@ -347,9 +365,10 @@ class Trainer:
             None
 
         Returns:
-            TODO (None): TODO
+            (None)
 
         """
+        set_exit_handler(self._logger.log_premature_termination)
         if not self._is_resume:
             self._logger.log_header(
                 description=self._description,
