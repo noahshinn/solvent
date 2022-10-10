@@ -62,6 +62,9 @@ trainer = train.Trainer(
     force_contribution=25.0,
     energy_scale=rms_force,
     force_scale=rms_force,
+    nmol=16,
+    units='kcal/mol',
+    log_dir='cyp-train',
     description='cyclopropenone in a 15 water solvent: full training'
 )
 print('trainer initialized')

@@ -62,6 +62,7 @@ trainer = train.Trainer(
     force_contribution=25.0,
     energy_scale=rms_force,
     force_scale=rms_force,
+    nmol=16,
     description='test run'
 )
 print('trainer initialized')

@@ -17,7 +17,12 @@ from e3nn import o3
 from e3nn.nn import Gate
 from e3nn.math import soft_one_hot_linspace
 
-from solvent import nn
+from solvent.nn import (
+    tp_path_exists,
+    InteractionBlock,
+    Compose,
+    basis_cutoff
+)
 
 from typing import Dict, Union, Optional, List
 
@@ -108,13 +113,13 @@ class Model(torch.nn.Module):
                 [
                     (mul, ir)
                     for mul, ir in self.irreps_hidden
-                    if ir.l == 0 and nn.tp_path_exists(irreps, self.irreps_edge_attr, ir) # type: ignore
+                    if ir.l == 0 and tp_path_exists(irreps, self.irreps_edge_attr, ir) # type: ignore
                 ]
             )
             irreps_gated = o3.Irreps(
-                    [(mul, ir) for mul, ir in self.irreps_hidden if ir.l > 0 and nn.tp_path_exists(irreps, self.irreps_edge_attr, ir)] # type: ignore
+                    [(mul, ir) for mul, ir in self.irreps_hidden if ir.l > 0 and tp_path_exists(irreps, self.irreps_edge_attr, ir)] # type: ignore
             )
-            ir = "0e" if nn.tp_path_exists(irreps, self.irreps_edge_attr, "0e") else "0o" # type: ignore
+            ir = "0e" if tp_path_exists(irreps, self.irreps_edge_attr, "0e") else "0o" # type: ignore
             irreps_gates = o3.Irreps([(mul, ir) for mul, _ in irreps_gated])
 
             gate = Gate(
@@ -124,7 +129,7 @@ class Model(torch.nn.Module):
                 [act_gates[ir.p] for _, ir in irreps_gates],
                 irreps_gated
             )
-            conv = nn.InteractionBlock(
+            conv = InteractionBlock(
                 irreps, # type: ignore
                 self.irreps_node_attr,
                 self.irreps_edge_attr,
@@ -135,10 +140,10 @@ class Model(torch.nn.Module):
                 navg_neighbors 
             )
             irreps = gate.irreps_out
-            self.layers.append(nn.Compose(conv, gate))
+            self.layers.append(Compose(conv, gate))
 
         self.layers.append(
-            nn.InteractionBlock(
+            InteractionBlock(
                 irreps, # type: ignore
                 self.irreps_node_attr,
                 self.irreps_edge_attr,
@@ -199,7 +204,7 @@ class Model(torch.nn.Module):
             basis="gaussian",
             cutoff=False
         ).mul(self.number_of_basis**0.5)
-        edge_attr = nn.basis_cutoff(_edge_length, self.max_radius)[:, None] * _edge_sh
+        edge_attr = basis_cutoff(_edge_length, self.max_radius)[:, None] * _edge_sh
 
         x = data["x"]
         z = data["pos"].new_ones((data["pos"].shape[0], 1))

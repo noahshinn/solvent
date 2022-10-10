@@ -5,7 +5,8 @@ STATUS: DEV
 
 import torch
 
-from solvent import utils, types
+from solvent.utils import mae, mse
+from solvent.types import QMPredMAE
 
 
 class EnergyForceLoss:
@@ -32,16 +33,16 @@ class EnergyForceLoss:
             f_pred: torch.Tensor,
             f_target: torch.Tensor,
         ) -> None:
-        self._c_e_mae += utils.mae(e_pred, e_target)
-        self._c_e_mse += utils.mse(e_pred, e_target)
-        self._c_f_mae += utils.mae(f_pred, f_target)
-        self._c_f_mse += utils.mse(f_pred, f_target)
+        self._c_e_mae += mae(e_pred, e_target)
+        self._c_e_mse += mse(e_pred, e_target)
+        self._c_f_mae += mae(f_pred, f_target)
+        self._c_f_mse += mse(f_pred, f_target)
         self._n += 1
 
-    def compute_metrics(self) -> types.QMPredMAE:
+    def compute_metrics(self) -> QMPredMAE:
         e_mae = self._c_e_mae / self._n
         f_mae = self._c_f_mae / self._n
-        return types.QMPredMAE(e_mae, f_mae)
+        return QMPredMAE(e_mae, f_mae)
 
     def compute_loss(self) -> torch.Tensor:
         e_loss = self._e_contrib * self._c_e_mse

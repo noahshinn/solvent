@@ -11,7 +11,7 @@
 #source ./venv/bin/activate
 
 # torch - ML framework
-pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
+pip install --pre torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cu116
 
 # torch-geometric, torch-scatter, torch-sparse, torch-cluster, torch-spline-conv - neural network math
 pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.12.0+cu116.html

@@ -7,14 +7,28 @@ import os
 import torch
 import datetime
 
-from solvent import utils
+from solvent.utils import PriorityQueue
 
 
 class Logger:
-    def __init__(self, log_dir: str, is_resume: bool) -> None:
+    def __init__(
+            self,
+            log_dir: str,
+            is_resume: bool,
+            units: str = 'hartrees'
+        ) -> None:
+        assert units.lower() == 'hartree' \
+            or units.lower() == 'hartrees' \
+            or units.lower() == 'ev' \
+            or units.lower() == 'evs' \
+            or units.lower() == 'kcal' \
+            or units.lower() == 'kcals' \
+            or units.lower() == 'kcal/mol' \
+            or units.lower() == 'kcals/mol'
+        self._units = units
         self._dir = log_dir
         self._file = os.path.join(log_dir, 'out.log')
-        self._performance_queue = utils.PriorityQueue()
+        self._performance_queue = PriorityQueue()
         if not is_resume:
             if not os.path.exists(self._dir):
                 os.makedirs(self._dir)
@@ -66,10 +80,10 @@ Epoch: {epoch}
             'f_test_mae': f_test_mae,
         }, priority=e_test_mae)
         s = f"""EPOCH {epoch}:
-Energy train mae: {e_train_mae.item()} (eV/molecule)
-Energy test mae: {e_test_mae.item()} (eV/molecule)
-Force train mae: {f_train_mae.item()} (eV/Angstrom)
-Force test mae: {f_test_mae.item()} (eV/Angstrom)
+Energy train mae: {e_train_mae.item()} ({self._units}/molecule)
+Energy test mae: {e_test_mae.item()} ({self._units}/molecule)
+Force train mae: {f_train_mae.item()} ({self._units}/Angstrom)
+Force test mae: {f_test_mae.item()} ({self._units}/Angstrom)
 Learning rate: {lr:.5f}
 Wall time: {duration:.2f} (s)
 

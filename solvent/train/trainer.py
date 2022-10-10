@@ -15,13 +15,11 @@ from torch.optim.lr_scheduler import (
     ReduceLROnPlateau
 )
 
-from solvent import (
-    nn,
-    logger,
-    types,
-    constants,
-    utils
-)
+from solvent import constants
+from solvent.nn import EnergyForceLoss, force_grad
+from solvent.utils import InvalidFileType
+from solvent.logger import Logger
+from solvent.types import EnergyForcePrediction, QMPredMAE
 
 from typing import Dict, Union
 from torch_geometric.loader import DataLoader
@@ -78,6 +76,8 @@ class Trainer:
             force_contribution: float = 1.0,
             energy_scale: float = 1.0,
             force_scale: float = 1.0,
+            nmol: int = 1,
+            units: str = 'hartree',
             start_epoch: int = 0,
             start_lr: float = 1e-2,
             log_dir: str = 'train-log',
@@ -95,13 +95,13 @@ class Trainer:
 
         if isinstance(train_loader, str):
             if not train_loader.endswith('.pt'):
-                raise utils.InvalidFileType('not given .pt file!')
+                raise InvalidFileType('not given .pt file!')
             self._train_loader = torch.load(train_loader)
         else:
             self._train_loader = train_loader
         if isinstance(test_loader, str):
             if not test_loader.endswith('.pt'):
-                raise utils.InvalidFileType('not given .pt file!')
+                raise InvalidFileType('not given .pt file!')
             self._train_loader = torch.load(train_loader)
         else:
             self._test_loader = test_loader 
@@ -136,23 +136,28 @@ class Trainer:
         self._is_resume = not optim is None and not scheduler is None
         self._lr = self._optim.param_groups[0]['lr']
 
-        self._loss = nn.EnergyForceLoss(
+        self._loss = EnergyForceLoss(
             energy_contribution=energy_contribution,
             force_contribution=force_contribution,
             device=self._device
         )
         self._e_scale = energy_scale
         self._f_scale = force_scale 
-        self._logger = logger.Logger(log_dir=log_dir, is_resume=self._is_resume)
+        self._nmol = nmol
+        self._logger = Logger(
+            log_dir=log_dir,
+            is_resume=self._is_resume,
+            units=units
+        )
         self._description = description
         self._walltime = self._srt_time = time.perf_counter()
 
-    def _pred(self, structure: Union[Dict, Data]) -> types.EnergyForcePrediction:
+    def _pred(self, structure: Union[Dict, Data]) -> EnergyForcePrediction:
         e = self._model(structure)
-        f = nn.force_grad(e, structure['pos'], self._device)
-        return types.EnergyForcePrediction(e, f)
+        f = force_grad(e, structure['pos'], self._device)
+        return EnergyForcePrediction(e, f)
 
-    def _evaluate(self, loader: DataLoader, mode: str) -> types.QMPredMAE:
+    def _evaluate(self, loader: DataLoader, mode: str) -> QMPredMAE:
         assert mode == 'TRAIN' or mode == 'TEST'
         for structure in loader:
             structure['pos'].requires_grad = True
@@ -169,7 +174,7 @@ class Trainer:
 
         e_mae, f_mae = self._loss.compute_metrics()
 
-        return types.QMPredMAE(e_mae, f_mae)
+        return QMPredMAE(e_mae, f_mae)
 
     def _log_metrics(
             self,
@@ -181,8 +186,8 @@ class Trainer:
         self._logger.log_epoch(
             epoch=self._epoch,
             lr=self._lr,
-            e_train_mae=e_train_mae * self._e_scale,
-            e_test_mae=e_test_mae * self._e_scale,
+            e_train_mae=e_train_mae * self._e_scale / self._nmol,
+            e_test_mae=e_test_mae * self._e_scale / self._nmol,
             f_train_mae=f_train_mae * self._f_scale,
             f_test_mae=f_test_mae * self._f_scale,
             duration=time.perf_counter() - self._walltime
