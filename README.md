@@ -14,7 +14,7 @@ To install:
   python -m venv ./solvent_venv
   source ./solvent_venv/bin/activate
   ```
-  * Install [CUDA](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) v11.6
+  * Install [CUDA](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) 11.6
   ```
   wget https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda-repo-rhel7-11-6-local-11.6.0_510.39.01-1.x86_64.rpm
   sudo rpm -i cuda-repo-rhel7-11-6-local-11.6.0_510.39.01-1.x86_64.rpm
@@ -50,7 +50,7 @@ To install:
   ```
   git clone https://github.com/noahshinn024/solvent.git
   cd solvent
-  pip install -e .
+  python setup.py develop
   ```
 
 To run demo:
