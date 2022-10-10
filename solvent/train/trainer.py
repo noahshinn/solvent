@@ -62,7 +62,7 @@ class Trainer:
     ...     *args, **kwargs)
     >>> trainer.fit()
 
-    Example shown in `solvent/demo/run.py`
+    Example shown in `/solvent/demo/example_training.py`
 
     """
     def __init__(

@@ -22,7 +22,10 @@ from solvent.utils import (
 from solvent.data import DataLoader
 
 from typing import List, Optional, Dict
-from solvent import types
+from solvent.types import (
+    PosIntTuple,
+    Loaders
+)
 
 
 class EnergyForceDataset:
@@ -93,17 +96,47 @@ class EnergyForceDataset:
             self._ncores = multiprocessing.cpu_count()
 
     def load(self) -> None:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (None): TODO
+
+        """
         distr_config = distribute(self._nstructures, self._ncores)
         res = Parallel(n_jobs=self._ncores)(delayed(self._load_collection)(task_idx_range) for task_idx_range in distr_config)
         self._dataset = flatten(res)
         self._is_loaded = True
 
     def get_dataset(self) -> List[Data]:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (List[Data]): TODO
+
+        """
         if not self._is_loaded:
             raise DataNotLoadedException('must load dataset before accessing content.')
         return self._dataset
 
     def get_energy_mean(self) -> float:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (float): TODO
+
+        """
         if not self._is_loaded:
             raise DataNotLoadedException('must load dataset before accessing content.')
         c = torch.zeros(1)
@@ -112,6 +145,16 @@ class EnergyForceDataset:
         return (c / self._nstructures).item()
 
     def get_force_rms(self) -> float:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (float): TODO
+
+        """
         if not self._is_loaded:
             raise DataNotLoadedException('must load dataset before accessing content.')
         c = torch.zeros(1)
@@ -120,12 +163,33 @@ class EnergyForceDataset:
         return (c / (self._nstructures * self._nstates * self._natoms * 3)).sqrt().item()
 
     def to_target_energy(self, shift_factor: float, scale_factor: float) -> None:
+        """
+        TODO
+
+        Args:
+            shift_factor (float): TODO
+            scale_factor (float): TODO
+
+        Returns:
+            TODO (None): TODO
+
+        """
         if not self._is_loaded:
             raise DataNotLoadedException('must load dataset before accessing content.')
         for i in range(self._nstructures):
             self._dataset[i].energies = (self._dataset[i].energies - shift_factor) * scale_factor
 
     def to_target_force(self, scale_factor: float) -> None:
+        """
+        TODO
+
+        Args:
+            scale_factor (float): TODO
+
+        Returns:
+            TODO (None): TODO
+
+        """
         if not self._is_loaded:
             raise DataNotLoadedException('must load dataset before accessing content.')
         for i in range(self._nstructures):
@@ -136,7 +200,19 @@ class EnergyForceDataset:
             split: float = 0.8,
             batch_size: int = 1,
             should_shuffle: bool = True
-        ) -> types.Loaders:
+        ) -> Loaders:
+        """
+        TODO
+
+        Args:
+            split (float): TODO
+            batch_size (int): TODO
+            should_shuffle (bool): TODO
+
+        Returns:
+            TODO (types.Loaders): TODO
+
+        """
         ntrain = round(self._nstructures * split)
         ntest = self._nstructures - ntrain
         train_loader = DataLoader(
@@ -149,23 +225,63 @@ class EnergyForceDataset:
             batch_size=batch_size,
             shuffle=should_shuffle
         )
-        return types.Loaders(train_loader, test_loader)
+        return Loaders(train_loader, test_loader)
 
     def __len__(self) -> int:
+        """
+        TODO
+
+        Args:
+            None
+
+        Returns:
+            TODO (int): TODO
+
+        """
         if not self._is_loaded:
             raise DataNotLoadedException('must load dataset before accessing dataset length.')
         return len(self._dataset)
 
     def __getitem__(self, idx: int) -> Data:
+        """
+        TODO
+
+        Args:
+            idx (int): TODO
+
+        Returns:
+            TODO (Data): TODO
+
+        """
         if not self._is_loaded:
             raise DataNotLoadedException('must load dataset before accessing content.')
         return self._dataset[idx]
 
-    def _load_collection(self, task_idx_range: types.PosIntTuple) -> List[Data]:
+    def _load_collection(self, task_idx_range: PosIntTuple) -> List[Data]:
+        """
+        TODO
+
+        Args:
+            task_idx_range (PosIntTuple): TODO
+
+        Returns:
+            TODO (List[Data]): TODO
+
+        """
         c = [self._load_structure(i) for i in range(task_idx_range[0], task_idx_range[1])]
         return c 
 
     def _load_structure(self, idx: int) -> Data:
+        """
+        TODO
+
+        Args:
+            idx (int): TODO
+
+        Returns:
+            TODO (Data): TODO
+
+        """
         one_hot_vecs = torch.stack(
             [atom_type_to_one_hot(
                 species=self._xyz[idx][i][0],
