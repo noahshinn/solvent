@@ -21,7 +21,7 @@ from solvent.utils import (
 
 from solvent.data import DataLoader
 
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Union
 from solvent.types import (
     PosIntTuple,
     Loaders
@@ -97,13 +97,13 @@ class EnergyForceDataset:
 
     def load(self) -> None:
         """
-        TODO
+        Loads the dataset into a list of Data.
 
         Args:
             None
 
         Returns:
-            TODO (None): TODO
+            (None)
 
         """
         distr_config = distribute(self._nstructures, self._ncores)
@@ -119,7 +119,7 @@ class EnergyForceDataset:
             None
 
         Returns:
-            TODO (List[Data]): TODO
+            (list(Data))
 
         """
         if not self._is_loaded:
@@ -194,6 +194,11 @@ class EnergyForceDataset:
             raise DataNotLoadedException('must load dataset before accessing content.')
         for i in range(self._nstructures):
             self._dataset[i].forces *= scale_factor
+
+    def add_structures(self, structures: List[Data]) -> None:
+        if not self._is_loaded:
+            raise DataNotLoadedException('must load dataset before adding to dataset.')
+        self._dataset.extend(structures)
 
     def gen_dataloaders(
             self,

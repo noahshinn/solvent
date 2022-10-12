@@ -1,4 +1,6 @@
-from solvent import models, train, data
+from solvent.data import EnergyForceDataset
+from solvent.models import Model
+from solvent.train import Trainer
 
 DATA_FILE = 'new-data.json'
 NSTRUCTURES = 100
@@ -11,7 +13,7 @@ NSTATES = 3
 
 
 # load dataset from json
-ds = data.EnergyForceDataset(
+ds = EnergyForceDataset(
     json_file=DATA_FILE,
     nstructures=NSTRUCTURES,
     one_hot_key={
@@ -39,7 +41,7 @@ train_loader, test_loader = ds.gen_dataloaders(
 print('loaders')
 
 # initialize model
-model = models.Model(
+model = Model(
     irreps_in=f'{NATOM_TYPES}x0e',
     hidden_sizes=[125, 40, 25, 15],
     irreps_out=f'{NSTATES}x0e',
@@ -54,7 +56,7 @@ model = models.Model(
 print('model initialized')
 
 # initialize trainer
-trainer = train.Trainer(
+trainer = Trainer(
     model=model,
     train_loader=train_loader,
     test_loader=test_loader,

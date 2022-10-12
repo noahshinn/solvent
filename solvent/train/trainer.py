@@ -357,6 +357,10 @@ class Trainer:
 
         return self._exit_code
 
+    def set_loaders(self, train_loader: DataLoader, test_loader: DataLoader) -> None:
+        self._train_loader = train_loader
+        self._test_loader = test_loader
+
     def fit(self) -> None:
         """
         TODO
