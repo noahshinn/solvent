@@ -27,7 +27,7 @@ from solvent.nn import (
 from typing import Dict, Union, Optional, List
 
 
-class Model(torch.nn.Module):
+class EModel(torch.nn.Module):
     """
     An equivariant graph neural network.
 

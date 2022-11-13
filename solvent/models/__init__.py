@@ -1,1 +1,1 @@
-from ._model import Model # temp
+from .e_model import EModel # temp

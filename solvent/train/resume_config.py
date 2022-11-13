@@ -33,7 +33,7 @@ class ResumeConfig:
     Usage:
 
     >>> from solvent import train
-    >>> model = Model(*args, **kwargs) 
+    >>> model = EModel(*args, **kwargs) 
     >>> optim = Optim(*args, **kwargs)
     >>> scheduler = Scheduler(*args, **kwargs)
     >>> resume_config = train.ResumeConfig.deserialize(
@@ -49,7 +49,7 @@ class ResumeConfig:
     ...     *args,
     ...     **kwargs,
     ... )
-    >>> trainer.fit()
+    >>> trainer.train()
 
     """
     def __init__(

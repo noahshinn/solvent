@@ -31,7 +31,7 @@ class Trainer:
     Start training:
 
     >>> from solvent import train, models
-    >>> model = models.Model(*args, **kwargs)
+    >>> model = models.EModel(*args, **kwargs)
     >>> train_loader = ...
     >>> test_loader = ...
     >>> trainer = train.Trainer(
@@ -153,7 +153,7 @@ class Trainer:
         self._description = description
         self._walltime = self._srt_time = time.perf_counter()
 
-    def _pred(self, structure: Union[Dict, Data]) -> EnergyForcePrediction:
+    def pred(self, structure: Union[Dict, Data]) -> EnergyForcePrediction:
         """
         Evaluates the model.
 
@@ -199,7 +199,7 @@ class Trainer:
         for structure in loader:
             structure['pos'].requires_grad = True
             structure.to(self._device)
-            e, f = self._pred(structure)
+            e, f = self.pred(structure)
             self._loss(
                 e_pred=e,
                 e_target=structure['energies'].to(self._device),
@@ -207,12 +207,12 @@ class Trainer:
                 f_target=structure['forces'].to(self._device)
             )
             if mode == 'TRAIN':
-                self._step(loss=self._loss.compute_loss())
+                self.step(loss=self._loss.compute_loss())
 
         e_mae, f_mae = self._loss.compute_metrics()
         return QMPredMAE(e_mae, f_mae)
 
-    def _log_metrics(
+    def log_metrics(
             self,
             e_train_mae: torch.Tensor,
             e_test_mae: torch.Tensor,
@@ -245,7 +245,7 @@ class Trainer:
             duration=time.perf_counter() - self._walltime
         )
 
-    def _step(self, loss: torch.Tensor) -> None:
+    def step(self, loss: torch.Tensor) -> None:
         """
         Propagates the training by one step.
         * only called during mode='TRAIN'
@@ -261,7 +261,7 @@ class Trainer:
         self._optim.step()
         self._optim.zero_grad()
         
-    def _update(self, loss: torch.Tensor) -> None:
+    def update(self, loss: torch.Tensor) -> None:
         """
         Updates after every epoch.
             - resets wall time
@@ -284,7 +284,7 @@ class Trainer:
         self._cur_chkpt_count += 1
         self._lr = self._optim.param_groups[0]['lr']
 
-    def _chkpt(self) -> None:
+    def chkpt(self) -> None:
         """
         TODO
 
@@ -306,7 +306,7 @@ class Trainer:
         self._logger.log_chkpt(path=save_path)
         self._cur_chkpt_count = 0
 
-    def _should_terminate(self) -> bool:
+    def should_terminate(self) -> bool:
         """
         TODO
 
@@ -328,7 +328,7 @@ class Trainer:
             return True
         return False
 
-    def _fit(self) -> str:
+    def fit(self) -> str:
         """
         TODO
 
@@ -339,21 +339,21 @@ class Trainer:
             (str): exit code
 
         """
-        while not self._should_terminate():
+        while not self.should_terminate():
             e_train_mae, f_train_mae = self._evaluate(loader=self._train_loader, mode='TRAIN')
             e_test_mae, f_test_mae = self._evaluate(loader=self._test_loader, mode='TEST')
 
-            self._log_metrics(
+            self.log_metrics(
                 e_train_mae=e_train_mae,
                 e_test_mae=e_test_mae,
                 f_train_mae=f_train_mae,
                 f_test_mae=f_test_mae,
             )
 
-            self._update(self._loss.compute_loss())
+            self.update(self._loss.compute_loss())
 
             if self._cur_chkpt_count == self._chkpt_freq:
-                self._chkpt()
+                self.chkpt()
 
         return self._exit_code
 
@@ -361,7 +361,7 @@ class Trainer:
         self._train_loader = train_loader
         self._test_loader = test_loader
 
-    def fit(self) -> None:
+    def train(self) -> None:
         """
         TODO
 
@@ -380,7 +380,7 @@ class Trainer:
             )
         else:
             self._logger.log_resume(self._epoch)
-        res = self._fit()
+        res = self.fit()
         self._logger.log_termination(
             exit_code=res,
             duration=time.perf_counter() - self._srt_time

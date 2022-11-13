@@ -1,5 +1,5 @@
 from solvent.data import EnergyForceDataset
-from solvent.models import Model
+from solvent.models import EModel
 from solvent.train import Trainer
 
 DATA_FILE = 'new-data.json'
@@ -41,7 +41,7 @@ train_loader, test_loader = ds.gen_dataloaders(
 print('loaders')
 
 # initialize model
-model = Model(
+model = EModel(
     irreps_in=f'{NATOM_TYPES}x0e',
     hidden_sizes=[125, 40, 25, 15],
     irreps_out=f'{NSTATES}x0e',

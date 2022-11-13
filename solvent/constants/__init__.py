@@ -1,1 +1,1 @@
-from ._constants import *
+SEVEN_DAYS = 604800
