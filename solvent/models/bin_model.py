@@ -39,7 +39,6 @@ class BinModel(torch.nn.Module):
             irreps_in (e3nn.o3.Irreps | str | None): representation of the input features
                 can be set to ``None`` if nodes don't have input features
             hidden_sizes (list(int)): hidden feature sizes
-            irreps_out (e3nn.o3.Irreps | str): representation of the output features
             nlayers (int): number of gates (non linearities)
             max_radius (float): maximum radius for the convolution
             nbasis_funcs (int): number of basis on which the edge length are

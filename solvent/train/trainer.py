@@ -68,6 +68,8 @@ class Trainer:
 
     def __init__(
             self,
+            root: str, 
+            run_name: str, 
             model: torch.nn.Module,
             train_loader: Union[DataLoader, str],
             test_loader: Union[DataLoader, str],
@@ -75,7 +77,6 @@ class Trainer:
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
             start_epoch: int = 0,
             start_lr: float = 1e-2,
-            log_dir: str = 'train-log',
             chkpt_freq: int = 1,
             description: str = ''
         ) -> None:
@@ -102,7 +103,7 @@ class Trainer:
             self._test_loader = test_loader 
 
         self._epoch = start_epoch
-        self._log_dir = log_dir 
+        self._log_dir = os.path.join(root, run_name)
         self._chkpt_freq = chkpt_freq
         self._cur_chkpt_count = 0
         self._exit_code = 'NOT TERMINATED'
@@ -133,7 +134,7 @@ class Trainer:
         self._lr = self._optim.param_groups[0]['lr']
 
         self._logger = Logger(
-            log_dir=log_dir,
+            log_dir=self._log_dir,
             is_resume=self._is_resume,
         )
         self._description = description

@@ -26,6 +26,8 @@ from torch_geometric.data.data import Data
 class EFTrainer(Trainer):
     def __init__(
             self,
+            root: str,
+            run_name: str,
             model: torch.nn.Module,
             train_loader: Union[DataLoader, str],
             test_loader: Union[DataLoader, str],
@@ -39,11 +41,12 @@ class EFTrainer(Trainer):
             units: str = 'hartree',
             start_epoch: int = 0,
             start_lr: float = 1e-2,
-            log_dir: str = 'train-log',
             chkpt_freq: int = 1,
             description: str = ''
         ) -> None:
         super().__init__(
+            root=root,
+            run_name=run_name,
             model=model,
             train_loader=train_loader,
             test_loader=test_loader,
@@ -51,7 +54,6 @@ class EFTrainer(Trainer):
             scheduler=scheduler,
             start_epoch=start_epoch,
             start_lr=start_lr,
-            log_dir=log_dir,
             chkpt_freq=chkpt_freq,
             description=description
         )

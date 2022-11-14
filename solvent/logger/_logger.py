@@ -4,39 +4,30 @@ STATUS: DEV
 """
 
 import os
-import torch
+import abc
 import datetime
 
 from solvent.utils import PriorityQueue
 
 
 class Logger:
+    __metaclass__ = abc.ABCMeta
+
     def __init__(
             self,
             log_dir: str,
             is_resume: bool,
-            units: str = 'hartrees'
         ) -> None:
         """
         Args:
             log_dir (str): Logging root directory.
             is_resume (bool): Determines if the respective training has started
                 from a previous checkpoint.
-            units (str): Unit of energy.
 
         Returns:
             (None)
 
         """
-        assert units.lower() == 'hartree' \
-            or units.lower() == 'hartrees' \
-            or units.lower() == 'ev' \
-            or units.lower() == 'evs' \
-            or units.lower() == 'kcal' \
-            or units.lower() == 'kcals' \
-            or units.lower() == 'kcal/mol' \
-            or units.lower() == 'kcals/mol'
-        self._units = units
         self._dir = log_dir
         self._file = os.path.join(log_dir, 'out.log')
         self._performance_queue = PriorityQueue()
@@ -45,7 +36,7 @@ class Logger:
                 os.makedirs(self._dir)
             open(self._file, 'w').close()
 
-    def _log(self, msg: str) -> None:
+    def log(self, msg: str) -> None:
         """
         Logs a message to the log file.
 
@@ -86,7 +77,7 @@ class Logger:
  Device: {device}
 
 """
-        self._log(s)
+        self.log(s)
 
     def log_resume(self, epoch: int) -> None:
         """
@@ -104,49 +95,7 @@ class Logger:
 Epoch: {epoch}
 
 """
-        self._log(s)
-
-    def log_epoch(
-            self,
-            epoch: int,
-            lr: float,
-            e_train_mae: torch.Tensor,
-            e_test_mae: torch.Tensor,
-            f_train_mae: torch.Tensor,
-            f_test_mae: torch.Tensor,
-            duration: float
-        ) -> None:
-        """
-        Logs a message after an epoch is complete.
-
-        Args:
-            epoch (int): Current training epoch.
-            lr (float): Current learning rate.
-            e_train_mae (torch.Tensor): Train energy MAE.
-            e_test_mae (torch.Tensor): Test energy MAE.
-            f_train_mae (torch.Tensor): Train force MAE.
-            f_test_mae (torch.Tensor): Test force MAE.
-            duration (float): Elapsed wall time for the given epoch.
-
-        Returns:
-            (None)
-
-        """
-        self._performance_queue.push({
-            'epoch': epoch,
-            'e_test_mae': e_test_mae,
-            'f_test_mae': f_test_mae,
-        }, priority=e_test_mae)
-        s = f"""EPOCH {epoch}:
-Energy train mae: {e_train_mae.item()} ({self._units}/molecule)
-Energy test mae: {e_test_mae.item()} ({self._units}/molecule)
-Force train mae: {f_train_mae.item()} ({self._units}/Angstrom)
-Force test mae: {f_test_mae.item()} ({self._units}/Angstrom)
-Learning rate: {lr:.5f}
-Wall time: {duration:.2f} (s)
-
-"""
-        self._log(s)
+        self.log(s)
 
     def log_chkpt(self, path: str) -> None:
         """
@@ -159,8 +108,9 @@ Wall time: {duration:.2f} (s)
             (None)
 
         """
-        self._log(f'Checkpoint saved to {path}\n\n')
+        self.log(f'Checkpoint saved to {path}\n\n')
 
+    # FIXME: flexible key logging
     def _format_best_params(self) -> str:
         """
         Formats the log message for up to the top 5 model performances.
@@ -208,7 +158,7 @@ Training completed with exit code: PREMATURE EXIT
 *** TERMINATED ***
 
 """
-        self._log(s)
+        self.log(s)
 
     def log_termination(self, exit_code: str, duration: float) -> None:
         """
@@ -235,4 +185,9 @@ Duration: {t_s[0]} hrs {t_s[1]} min {t_s[2]:.2f} sec
 *** HAPPY LANDING ***
 
 """
-        self._log(s)
+        self.log(s)
+
+    @abc.abstractmethod
+    def log_epoch(self, *args, **kwargs) -> None:
+        """Logs a message after an epoch is complete."""
+        return
