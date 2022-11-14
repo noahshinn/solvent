@@ -16,6 +16,7 @@ from torch_scatter import scatter
 from e3nn import o3
 from e3nn.nn import Gate
 from e3nn.math import soft_one_hot_linspace
+from e3nn.util.jit import compile_mode
 
 from solvent.nn import (
     tp_path_exists,
@@ -27,7 +28,8 @@ from solvent.nn import (
 from typing import Dict, Union, Optional, List
 
 
-class EModel(torch.nn.Module):
+@compile_mode("script")
+class Model(torch.nn.Module):
     """
     An equivariant graph neural network.
 

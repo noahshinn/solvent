@@ -7,9 +7,10 @@ import torch
 
 from solvent.utils import mae, mse
 from solvent.types import QMPredMAE
+from solvent.nn import LossMixin
 
 
-class EnergyForceLoss:
+class EnergyForceLoss(LossMixin):
     def __init__(
             self,
             energy_contribution: float = 0.0,

@@ -6,12 +6,14 @@ STATUS: DEV
 import torch
 from e3nn import o3
 from torch_geometric.data import Data
+from e3nn.util.jit import compile_mode
 
-from solvent.models import EModel
+from solvent.models import Model
 
 from typing import Union, List, Optional, Dict
 
 
+@compile_mode("script")
 class BinModel(torch.nn.Module):
     """
     An equivariant graph neural network for binary classification.
@@ -55,7 +57,7 @@ class BinModel(torch.nn.Module):
 
         """
         super().__init__()
-        self.base_model = EModel(
+        self.base_model = Model(
             irreps_in=irreps_in,
             hidden_sizes=hidden_sizes,
             irreps_out='1x0e',
