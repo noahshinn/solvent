@@ -18,6 +18,11 @@ class QMPredMAE(NamedTuple):
     e_mae: torch.Tensor
     f_mae: torch.Tensor
 
+class BinPredMetrics(NamedTuple):
+    accuracy: torch.Tensor
+    precision: torch.Tensor
+    recall: torch.Tensor
+
 class PosIntTuple(NamedTuple):
     num1: PosInt
     num2: PosInt

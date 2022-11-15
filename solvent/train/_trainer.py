@@ -133,10 +133,6 @@ class Trainer:
         self._is_resume = not optim is None and not scheduler is None
         self._lr = self._optim.param_groups[0]['lr']
 
-        self._logger = Logger(
-            log_dir=self._log_dir,
-            is_resume=self._is_resume,
-        )
         self._description = description
         self._walltime = self._srt_time = time.perf_counter()
 

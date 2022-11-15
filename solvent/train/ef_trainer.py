@@ -17,6 +17,7 @@ from torch.optim.lr_scheduler import (
 from solvent.nn import EnergyForceLoss, force_grad
 from solvent.types import EnergyForcePrediction, QMPredMAE
 from solvent.train import Trainer
+from solvent.logger import EFLogger
 
 from typing import Dict, Union
 from torch_geometric.loader import DataLoader
@@ -61,6 +62,10 @@ class EFTrainer(Trainer):
             energy_contribution=energy_contribution,
             force_contribution=force_contribution,
             device='cuda:0' if torch.cuda.is_available() else 'cpu'
+        )
+        self._logger = EFLogger(
+            log_dir=self._log_dir,
+            is_resume=self._is_resume,
         )
         self._e_scale = energy_scale
         self._f_scale = force_scale
@@ -183,8 +188,6 @@ class EFTrainer(Trainer):
 
     def fit(self) -> str:
         """
-        TODO
-
         Args:
             None
 

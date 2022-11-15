@@ -1,7 +1,10 @@
 from solvent.data import EnergyForceDataset
-from solvent.models import EModel
-from solvent.train import Trainer
+from solvent.models import Model
+from solvent.train import EFTrainer
 
+
+ROOT = 'root'
+RUN_NAME = 'cyp_15_full'
 DATA_FILE = 'new-data.json'
 NSTRUCTURES = 100
 BATCH_SIZE = 1
@@ -41,7 +44,7 @@ train_loader, test_loader = ds.gen_dataloaders(
 print('loaders')
 
 # initialize model
-model = EModel(
+model = Model(
     irreps_in=f'{NATOM_TYPES}x0e',
     hidden_sizes=[125, 40, 25, 15],
     irreps_out=f'{NSTATES}x0e',
@@ -56,7 +59,9 @@ model = EModel(
 print('model initialized')
 
 # initialize trainer
-trainer = Trainer(
+trainer = EFTrainer(
+    root=ROOT,
+    run_name=RUN_NAME,
     model=model,
     train_loader=train_loader,
     test_loader=test_loader,
@@ -66,7 +71,6 @@ trainer = Trainer(
     force_scale=rms_force,
     nmol=16,
     units='kcal/mol',
-    log_dir='cyp-train',
     description='cyclopropenone in a 15 water solvent: full training'
 )
 print('trainer initialized')
