@@ -22,6 +22,7 @@ class BinPredMetrics(NamedTuple):
     accuracy: torch.Tensor
     precision: torch.Tensor
     recall: torch.Tensor
+    f1: torch.Tensor
 
 class PosIntTuple(NamedTuple):
     num1: PosInt

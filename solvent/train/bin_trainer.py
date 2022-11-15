@@ -45,7 +45,9 @@ class BinTrainer(Trainer):
             precision_train: torch.Tensor,
             precision_test: torch.Tensor,
             recall_train: torch.Tensor,
-            recall_test: torch.Tensor
+            recall_test: torch.Tensor,
+            f1_train: torch.Tensor,
+            f1_test: torch.Tensor
         ) -> None:
         self._logger.log_epoch(
             epoch=self._epoch,
@@ -56,6 +58,8 @@ class BinTrainer(Trainer):
             precision_test=precision_test,
             recall_train=recall_train,
             recall_test=recall_test,
+            f1_train=f1_train,
+            f1_test=f1_test,
             duration=time.perf_counter() - self._walltime
         )
 
@@ -109,8 +113,8 @@ class BinTrainer(Trainer):
             )
             if mode == 'TRAIN':
                 self.step(loss=self._loss.compute_loss())
-        acc, prec, rec = self._loss.compute_metrics()
-        return BinPredMetrics(acc, prec, rec)
+        acc, prec, rec, f1 = self._loss.compute_metrics()
+        return BinPredMetrics(acc, prec, rec, f1)
 
     def update(self, loss: torch.Tensor) -> None:
         self._walltime = time.perf_counter()
@@ -133,8 +137,8 @@ class BinTrainer(Trainer):
 
         """
         while not self.should_terminate():
-            acc_train, prec_train, rec_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
-            acc_test, prec_test, rec_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
+            acc_train, prec_train, rec_train, f1_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
+            acc_test, prec_test, rec_test, f1_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
 
             self.log_metrics(
                 accuracy_train=acc_train,
@@ -143,6 +147,8 @@ class BinTrainer(Trainer):
                 precision_test=prec_test,
                 recall_train=rec_train,
                 recall_test=rec_test,
+                f1_train=f1_train,
+                f1_test=f1_test
             )
 
             self.update(self._loss.compute_loss())
