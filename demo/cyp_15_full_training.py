@@ -24,7 +24,8 @@ ds = EnergyForceDataset(
         'C': [0., 1., 0.],
         'O': [0., 0., 1.]
     },
-    units='kcal')
+    units='kcal'
+)
 ds.load()
 print('loaded dataset')
 

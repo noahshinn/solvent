@@ -5,7 +5,7 @@ STATUS: NOT TESTED
 
 import torch
 
-from solvent.nn import LossMixin
+from ._loss import LossMixin
 from solvent.types import BinPredMetrics
 
 
