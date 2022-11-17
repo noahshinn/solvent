@@ -69,7 +69,6 @@ class BinTrainer(Trainer):
 
         N: Number of atoms in the system.
         M: Number of unique chemical species types
-        K: Number of electronic states.
 
         Args:
             structure (Union[Dict, Data]): An atomic system represented as either
@@ -77,8 +76,7 @@ class BinTrainer(Trainer):
                 data fields:
                     `x`: one-hot vector of size (M)
                     `pos`: coordinates of size (N, 3)
-                    `energies`: energy vector of size (K)
-                    `forces`: force vector of size (K, N, 3)
+                    `is_like_zero`: binary classification 
 
         Returns:
             (torch.Tensor): A binary label.
@@ -96,8 +94,7 @@ class BinTrainer(Trainer):
             mode (str): One of 'TRAIN' or 'TEST'
 
         Returns:
-            e_mae (torch.Tensor), f_mae (torch.Tensor): Energy force mean absolute
-                error.
+            acc (torch.Tensor), prec (torch.Tensor), rec (torch.Tensor), f1 (torch.Tensor)
 
         Asserts:
             - `mode` is one of 'TRAIN' or 'TEST'

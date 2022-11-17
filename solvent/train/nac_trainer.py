@@ -12,11 +12,10 @@ from solvent.train import Trainer
 from solvent.data import DataLoader
 from solvent.nn import NACLoss
 from solvent.logger import NACLogger
-from solvent.utils import to_bin
-from solvent.types import BinPredMetrics
 
 from typing import Union, Dict
 from torch_geometric.data.data import Data
+from solvent.types import NACPredMetrics 
 
 
 class NACTrainer(Trainer):
@@ -38,17 +37,20 @@ class NACTrainer(Trainer):
         self._loss = NACLoss(self._device)
         self._logger = NACLogger(self._log_dir, self._is_resume)
     
-    # TODO: implement
     def log_metrics(
             self,
-            nac_mae: torch.Tensor,
-            nac_mse: torch.Tensor
+            train_nac_mae: torch.Tensor,
+            test_nac_mae: torch.Tensor,
+            train_nac_mse: torch.Tensor,
+            test_nac_mse: torch.Tensor,
         ) -> None:
         self._logger.log_epoch(
             epoch=self._epoch,
             lr=self._lr,
-            nac_mae=nac_mae,
-            nac_mse=nac_mse,
+            train_mae=train_nac_mae,
+            test_mae=test_nac_mae,
+            train_mse=train_nac_mse,
+            test_mse=test_nac_mse,
             duration=time.perf_counter() - self._walltime
         )
 
@@ -58,7 +60,6 @@ class NACTrainer(Trainer):
 
         N: Number of atoms in the system.
         M: Number of unique chemical species types
-        K: Number of electronic states.
 
         Args:
             structure (Union[Dict, Data]): An atomic system represented as either
@@ -66,17 +67,15 @@ class NACTrainer(Trainer):
                 data fields:
                     `x`: one-hot vector of size (M)
                     `pos`: coordinates of size (N, 3)
-                    `energies`: energy vector of size (K)
-                    `forces`: force vector of size (K, N, 3)
+                    `nacs`: energy vector of size (N * 3)
 
         Returns:
-            (torch.Tensor): A binary label.
+            (torch.Tensor): Derivative coupling vector of size N * 3
 
         """
-        out = self._model(structure)
-        return to_bin(out)
+        return self._model(structure)
 
-    def evaluate(self, loader: DataLoader, mode: str) -> BinPredMetrics:
+    def evaluate(self, loader: DataLoader, mode: str) -> NACPredMetrics:
         """
         Full pass through a data set.
 
@@ -85,8 +84,7 @@ class NACTrainer(Trainer):
             mode (str): One of 'TRAIN' or 'TEST'
 
         Returns:
-            e_mae (torch.Tensor), f_mae (torch.Tensor): Energy force mean absolute
-                error.
+            nac_mae (torch.Tensor), nac_mse (torch.Tensor)
 
         Asserts:
             - `mode` is one of 'TRAIN' or 'TEST'
@@ -98,12 +96,12 @@ class NACTrainer(Trainer):
             label = self.pred(structure)
             self._loss(
                 label,
-                structure['is_like_zero'].to(self._device)
+                structure['nac'].to(self._device)
             )
             if mode == 'TRAIN':
                 self.step(loss=self._loss.compute_loss())
-        acc, prec, rec, f1 = self._loss.compute_metrics()
-        return BinPredMetrics(acc, prec, rec, f1)
+        nac_mae, nac_mse = self._loss.compute_metrics()
+        return NACPredMetrics(nac_mae, nac_mse)
 
     def update(self, loss: torch.Tensor) -> None:
         self._walltime = time.perf_counter()
@@ -126,18 +124,14 @@ class NACTrainer(Trainer):
 
         """
         while not self.should_terminate():
-            acc_train, prec_train, rec_train, f1_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
-            acc_test, prec_test, rec_test, f1_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
+            nac_mae_train, nac_mse_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
+            nac_mae_test, nac_mse_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
 
             self.log_metrics(
-                accuracy_train=acc_train,
-                accuracy_test=acc_test,
-                precision_train=prec_train,
-                precision_test=prec_test,
-                recall_train=rec_train,
-                recall_test=rec_test,
-                f1_train=f1_train,
-                f1_test=f1_test
+                train_nac_mae=nac_mae_train,
+                test_nac_mae=nac_mae_test,
+                train_nac_mse=nac_mse_train,
+                test_nac_mse=nac_mse_test,
             )
 
             self.update(self._loss.compute_loss())
