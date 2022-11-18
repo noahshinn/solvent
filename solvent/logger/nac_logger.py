@@ -19,6 +19,11 @@ class NACLogger(Logger):
             duration: float
         ) -> None:
         """Logs a message after an epoch is complete."""
+        self._performance_queue.push({
+            'epoch': epoch,
+            'nac_test_mae': test_mae,
+            'nac_test_mse': test_mse,
+        }, priority=test_mse)
         s = f"""EPOCH {epoch}:
 Train MAE: {train_mae:.4f}
 Test MAE: {test_mae:.4f}
@@ -29,3 +34,23 @@ Wall time: {duration:.2f} (s)
 
 """
         self.log(s)
+
+    def format_best_params(self) -> str:
+        """
+        Formats the log message for up to the top 5 model performances.
+        Args:
+            None 
+        Returns:
+            s (str): Message to log.
+        """
+        s = ''
+        n = 5
+        while n > 0 and not self._performance_queue.isEmpty():
+            p = self._performance_queue.pop()
+            s += f"""
+Epoch: {p['epoch']}
+NAC test mae: {p['nac_test_mae']}
+NAC test mse: {p['nac_test_mse']}
+"""
+            n -= 1
+        return s

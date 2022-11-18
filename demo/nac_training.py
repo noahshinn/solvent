@@ -4,7 +4,7 @@ from solvent.train import BinTrainer
 
 ROOT = 'root'
 RUN_NAME = 'nac-training'
-DATA_FILE = './nac-dataset.json'
+DATA_FILE = '../../nac-sampling/data-nacs.json'
 NSTRUCTURES = 100
 BATCH_SIZE = 1
 SPLIT = 0.9
@@ -19,7 +19,6 @@ ds = NACDataset(
         'C': [0., 1., 0.],
         'O': [0., 0., 1.]
     },
-    units='hartree'
 )
 ds.load()
 print('loaded dataset')

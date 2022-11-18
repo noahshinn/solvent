@@ -30,9 +30,7 @@ class EFLogger(Logger):
             or units.lower() == 'hartrees' \
             or units.lower() == 'ev' \
             or units.lower() == 'evs' \
-            or units.lower() == 'kcal' \
-            or units.lower() == 'kcals' \
-            or units.lower() == 'kcal/mol' \
+            or units.lower() == 'kcal' \ or units.lower() == 'kcals' \ or units.lower() == 'kcal/mol' \
             or units.lower() == 'kcals/mol'
         super().__init__(log_dir, is_resume)
         self._units = units
@@ -79,3 +77,22 @@ Wall time: {duration:.2f} (s)
 """
         self.log(s)
 
+    def format_best_params(self) -> str:
+        """
+        Formats the log message for up to the top 5 model performances.
+        Args:
+            None 
+        Returns:
+            s (str): Message to log.
+        """
+        s = ''
+        n = 5
+        while n > 0 and not self._performance_queue.isEmpty():
+            p = self._performance_queue.pop()
+            s += f"""
+Epoch: {p['epoch']}
+Energy test mae: {p['e_test_mae']}
+Force test mae: {p['f_test_mae']}
+"""
+            n -= 1
+        return s
