@@ -31,6 +31,6 @@ class NACLoss(LossMixin):
         return self._c_mse
     
     def reset(self) -> None:
-        self._c_mae = torch.zeros(1).to(self._device)
-        self._c_mse = torch.zeros(1).to(self._device)
+        self._c_mae = torch.zeros(1).to(self._device).detach()
+        self._c_mse = torch.zeros(1).to(self._device).detach()
         self._n = 0

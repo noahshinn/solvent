@@ -25,10 +25,10 @@ class NACLogger(Logger):
             'nac_test_mse': test_mse,
         }, priority=test_mse)
         s = f"""EPOCH {epoch}:
-Train MAE: {train_mae:.4f}
-Test MAE: {test_mae:.4f}
-Train MSE: {train_mse:.4f}
-Test MSE: {test_mse:.4f}
+Train MAE: {train_mae.item():.4f}
+Test MAE: {test_mae.item():.4f}
+Train MSE: {train_mse.item():.4f}
+Test MSE: {test_mse.item():.4f}
 Learning rate: {lr:.5f}
 Wall time: {duration:.2f} (s)
 

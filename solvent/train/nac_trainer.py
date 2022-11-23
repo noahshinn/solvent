@@ -11,6 +11,7 @@ from torch.optim.lr_scheduler import ExponentialLR, ReduceLROnPlateau
 from solvent.train import Trainer
 from solvent.data import DataLoader
 from solvent.nn import NACLoss
+from solvent.utils import mse, normalize
 from solvent.logger import NACLogger
 
 from typing import Union, Dict
@@ -28,6 +29,8 @@ class NACTrainer(Trainer):
             test_loader: Union[DataLoader, str],
             optim: Union[Adam, SGD, None] = None,
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
+            mu: Union[float, torch.Tensor] = 0.0,
+            std: Union[float, torch.Tensor] = 1.0,
             start_epoch: int = 0,
             start_lr: float = 0.01,
             chkpt_freq: int = 1,
@@ -36,6 +39,10 @@ class NACTrainer(Trainer):
         super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, chkpt_freq, description)
         self._loss = NACLoss(self._device)
         self._logger = NACLogger(self._log_dir, self._is_resume)
+        
+        # for target value scaling and shifting
+        self._mu = mu
+        self._std = std
     
     def log_metrics(
             self,
@@ -70,7 +77,7 @@ class NACTrainer(Trainer):
                     `nacs`: energy vector of size (N * 3)
 
         Returns:
-            (torch.Tensor): Derivative coupling vector of size N * 3
+            (torch.Tensor): Derivative coupling vector of size (N, 3)
 
         """
         return self._model(structure)
@@ -93,15 +100,21 @@ class NACTrainer(Trainer):
         assert mode == 'TRAIN' or mode == 'TEST'
         for structure in loader:
             structure.to(self._device)
-            label = self.pred(structure)
+            pred = self.pred(structure)
             self._loss(
-                label,
-                structure['nac'].to(self._device)
+                pred,
+                normalize(structure['nacs'].to(self._device), self._mu, self._std)
             )
             if mode == 'TRAIN':
-                self.step(loss=self._loss.compute_loss())
+                loss = mse(pred, normalize(structure['nacs'].to(self._device), self._mu, self._std))
+                loss.backward()
+                self.step()
         nac_mae, nac_mse = self._loss.compute_metrics()
         return NACPredMetrics(nac_mae, nac_mse)
+
+    def step(self) -> None:
+        self._optim.step()
+        self._optim.zero_grad()
 
     def update(self, loss: torch.Tensor) -> None:
         self._walltime = time.perf_counter()
@@ -109,6 +122,7 @@ class NACTrainer(Trainer):
             self._scheduler.step(metrics=loss)
         else:
             self._scheduler.step()
+        self._loss.reset()
         self._epoch += 1
         self._cur_chkpt_count += 1
         self._lr = self._optim.param_groups[0]['lr']
@@ -134,9 +148,9 @@ class NACTrainer(Trainer):
                 test_nac_mse=nac_mse_test,
             )
 
-            self.update(self._loss.compute_loss())
-
             if self._cur_chkpt_count == self._chkpt_freq:
                 self.chkpt()
+
+            self.update(self._loss.compute_loss())
 
         return self._exit_code

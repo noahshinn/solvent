@@ -1,5 +1,5 @@
 """
-STATUS: NOT TESTED
+STATUS: DEV
 
 """
 
@@ -18,7 +18,6 @@ from torch.optim.lr_scheduler import (
 
 from solvent import constants
 from solvent.utils import InvalidFileType, set_exit_handler
-from solvent.logger import Logger
 
 from typing import Union
 from torch_geometric.loader import DataLoader

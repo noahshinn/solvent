@@ -30,7 +30,9 @@ class EFLogger(Logger):
             or units.lower() == 'hartrees' \
             or units.lower() == 'ev' \
             or units.lower() == 'evs' \
-            or units.lower() == 'kcal' \ or units.lower() == 'kcals' \ or units.lower() == 'kcal/mol' \
+            or units.lower() == 'kcal' \
+            or units.lower() == 'kcals' \
+            or units.lower() == 'kcal/mol' \
             or units.lower() == 'kcals/mol'
         super().__init__(log_dir, is_resume)
         self._units = units

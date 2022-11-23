@@ -71,6 +71,7 @@ class NACModel(torch.nn.Module):
             act=act,
             cache=cache
         )
+        self._natoms = natoms
         self._out_act = torch.nn.Sigmoid()
 
     def forward(self, data: Union[Data, Dict[str, torch.Tensor]]) -> torch.Tensor:
@@ -89,4 +90,6 @@ class NACModel(torch.nn.Module):
             x (torch.Tensor): output
 
         """
-        return self.base_model(data)
+        out = self.base_model(data).reshape((self._natoms, 3))
+        print(out)
+        return out

@@ -4,7 +4,7 @@ STATUS: DEV
 """
 
 import torch
-from torch_geometric.loader import DataLoader
+from torch_geometric.data import DataLoader
 from typing import NamedTuple, NewType
 
 PosInt = NewType('PosInt', int)

@@ -25,7 +25,7 @@ class NACDataset(Dataset):
         self._species = self._data['species']
         self._coords = self._data['coords']
         self._nacs = self._data['nacs']
-        self._natoms = len(self._data['species'])
+        self._natoms = len(self._data['species'][0])
 
     def load_structure(self, idx: int) -> Data:
         """Load a single structure."""
