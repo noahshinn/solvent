@@ -16,6 +16,6 @@ def set_exit_handler(c: Callable) -> None:
     signal.signal(signal.SIGINT, signal_handler)
 
 def log() -> None:
-    print('here')
+    print('stopping process')
 
 set_exit_handler(log)

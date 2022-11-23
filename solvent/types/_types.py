@@ -4,7 +4,7 @@ STATUS: DEV
 """
 
 import torch
-from torch_geometric.loader import DataLoader
+from torch_geometric.data import DataLoader
 from typing import NamedTuple, NewType
 
 PosInt = NewType('PosInt', int)
@@ -23,6 +23,10 @@ class BinPredMetrics(NamedTuple):
     precision: torch.Tensor
     recall: torch.Tensor
     f1: torch.Tensor
+
+class NACPredMetrics(NamedTuple):
+    nac_mae: torch.Tensor
+    nac_mse: torch.Tensor
 
 class PosIntTuple(NamedTuple):
     num1: PosInt

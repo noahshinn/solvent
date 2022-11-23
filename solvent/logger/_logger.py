@@ -1,5 +1,5 @@
 """
-STATUS: DEV
+STATUS: NOT TESTED
 
 """
 
@@ -110,30 +110,10 @@ Epoch: {epoch}
         """
         self.log(f'Checkpoint saved to {path}\n\n')
 
-    # FIXME: flexible key logging
-    def _format_best_params(self) -> str:
-        """
-        Formats the log message for up to the top 5 model performances.
-
-        Args:
-            None 
-
-        Returns:
-            s (str): Message to log.
-
-        """
-        s = ''
-        n = 5
-        while n > 0 and not self._performance_queue.isEmpty():
-            p = self._performance_queue.pop()
-            s += f"""
-Epoch: {p['epoch']}
-Energy test mae: {p['e_test_mae']}
-Force test mae: {p['f_test_mae']}
-
-"""
-            n -= 1
-        return s
+    @abc.abstractmethod
+    def format_best_params(self) -> None:
+        """Formats the top 5 results for logging."""
+        return
 
     def log_premature_termination(self) -> None:
         """
@@ -147,7 +127,7 @@ Force test mae: {p['f_test_mae']}
             (None)
 
         """
-        best_param_s = self._format_best_params()
+        best_param_s = self.format_best_params()
         s = f"""
 Training completed with exit code: PREMATURE EXIT
 
@@ -173,7 +153,7 @@ Training completed with exit code: PREMATURE EXIT
 
         """
         t_s = str(datetime.timedelta(seconds=duration)).split(':')
-        best_param_s = self._format_best_params()
+        best_param_s = self.format_best_params()
         s = f"""
 Training completed with exit code: {exit_code}
 Duration: {t_s[0]} hrs {t_s[1]} min {t_s[2]:.2f} sec

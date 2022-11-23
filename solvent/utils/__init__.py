@@ -13,6 +13,7 @@ from ._center_coords import center_coords
 from ._priority_queue import PriorityQueue
 from ._exit_handler import set_exit_handler
 from ._to_bin import to_bin
+from .normalize import normalize
 
 from ._exceptions import (
     DataNotLoadedException,

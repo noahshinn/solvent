@@ -32,14 +32,10 @@ class Dataset:
             json_file: str,
             nstructures: int,
             one_hot_key: Dict,
-            units: str = 'HARTREE',
             ncores: Optional[int] = None
         ) -> None:
         assert json_file.endswith('.json')
         assert nstructures >= 2
-        assert units.upper() == 'HARTREE' \
-            or units.upper() == 'EV' \
-            or units.upper() == 'KCAL'
 
         with open(json_file) as f:
             self._data = json.load(f)
@@ -47,7 +43,6 @@ class Dataset:
         self._one_hot_key = one_hot_key
         self._is_loaded = False
         self._dataset: List[Data] = []
-        self._units = units.upper()
         if not ncores is None:
             self._ncores = ncores
         else:

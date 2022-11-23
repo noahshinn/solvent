@@ -62,7 +62,11 @@ class EnergyForceDataset(Dataset):
             units: str = 'HARTREE',
             ncores: Optional[int] = None
         ) -> None:
-        super().__init__(json_file, nstructures, one_hot_key, units, ncores)
+        super().__init__(json_file, nstructures, one_hot_key, ncores)
+        assert units.upper() == 'HARTREE' \
+            or units.upper() == 'EV' \
+            or units.upper() == 'KCAL'
+        self._units = units.upper()
         self._xyz = self._data['xyz']
         self._energies = self._data['energy']
         self._forces = self._data['grad']

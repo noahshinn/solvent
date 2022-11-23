@@ -10,16 +10,16 @@ from torch.optim.lr_scheduler import ExponentialLR, ReduceLROnPlateau
 
 from solvent.train import Trainer
 from solvent.data import DataLoader
-from solvent.nn import BinLoss
-from solvent.logger import BinLogger
-from solvent.utils import to_bin
-from solvent.types import BinPredMetrics
+from solvent.nn import NACLoss
+from solvent.utils import mse, normalize
+from solvent.logger import NACLogger
 
 from typing import Union, Dict
 from torch_geometric.data.data import Data
+from solvent.types import NACPredMetrics 
 
 
-class BinTrainer(Trainer):
+class NACTrainer(Trainer):
     def __init__(
             self,
             root: str,
@@ -29,37 +29,35 @@ class BinTrainer(Trainer):
             test_loader: Union[DataLoader, str],
             optim: Union[Adam, SGD, None] = None,
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
+            mu: Union[float, torch.Tensor] = 0.0,
+            std: Union[float, torch.Tensor] = 1.0,
             start_epoch: int = 0,
             start_lr: float = 0.01,
             chkpt_freq: int = 1,
             description: str = ''
         ) -> None:
         super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, chkpt_freq, description)
-        self._loss = BinLoss(self._device)
-        self._logger = BinLogger(self._log_dir, self._is_resume)
+        self._loss = NACLoss(self._device)
+        self._logger = NACLogger(self._log_dir, self._is_resume)
+        
+        # for target value scaling and shifting
+        self._mu = mu
+        self._std = std
     
     def log_metrics(
             self,
-            accuracy_train: torch.Tensor,
-            accuracy_test: torch.Tensor,
-            precision_train: torch.Tensor,
-            precision_test: torch.Tensor,
-            recall_train: torch.Tensor,
-            recall_test: torch.Tensor,
-            f1_train: torch.Tensor,
-            f1_test: torch.Tensor
+            train_nac_mae: torch.Tensor,
+            test_nac_mae: torch.Tensor,
+            train_nac_mse: torch.Tensor,
+            test_nac_mse: torch.Tensor,
         ) -> None:
         self._logger.log_epoch(
             epoch=self._epoch,
             lr=self._lr,
-            accuracy_train=accuracy_train,
-            accuracy_test=accuracy_test,
-            precision_train=precision_train,
-            precision_test=precision_test,
-            recall_train=recall_train,
-            recall_test=recall_test,
-            f1_train=f1_train,
-            f1_test=f1_test,
+            train_mae=train_nac_mae,
+            test_mae=test_nac_mae,
+            train_mse=train_nac_mse,
+            test_mse=test_nac_mse,
             duration=time.perf_counter() - self._walltime
         )
 
@@ -76,16 +74,15 @@ class BinTrainer(Trainer):
                 data fields:
                     `x`: one-hot vector of size (M)
                     `pos`: coordinates of size (N, 3)
-                    `is_like_zero`: binary classification 
+                    `nacs`: energy vector of size (N * 3)
 
         Returns:
-            (torch.Tensor): A binary label.
+            (torch.Tensor): Derivative coupling vector of size (N, 3)
 
         """
-        out = self._model(structure)
-        return to_bin(out)
+        return self._model(structure)
 
-    def evaluate(self, loader: DataLoader, mode: str) -> BinPredMetrics:
+    def evaluate(self, loader: DataLoader, mode: str) -> NACPredMetrics:
         """
         Full pass through a data set.
 
@@ -94,7 +91,7 @@ class BinTrainer(Trainer):
             mode (str): One of 'TRAIN' or 'TEST'
 
         Returns:
-            acc (torch.Tensor), prec (torch.Tensor), rec (torch.Tensor), f1 (torch.Tensor)
+            nac_mae (torch.Tensor), nac_mse (torch.Tensor)
 
         Asserts:
             - `mode` is one of 'TRAIN' or 'TEST'
@@ -103,15 +100,21 @@ class BinTrainer(Trainer):
         assert mode == 'TRAIN' or mode == 'TEST'
         for structure in loader:
             structure.to(self._device)
-            label = self.pred(structure)
+            pred = self.pred(structure)
             self._loss(
-                label,
-                structure['is_like_zero'].to(self._device)
+                pred,
+                normalize(structure['nacs'].to(self._device), self._mu, self._std)
             )
             if mode == 'TRAIN':
-                self.step(loss=self._loss.compute_loss())
-        acc, prec, rec, f1 = self._loss.compute_metrics()
-        return BinPredMetrics(acc, prec, rec, f1)
+                loss = mse(pred, normalize(structure['nacs'].to(self._device), self._mu, self._std))
+                loss.backward()
+                self.step()
+        nac_mae, nac_mse = self._loss.compute_metrics()
+        return NACPredMetrics(nac_mae, nac_mse)
+
+    def step(self) -> None:
+        self._optim.step()
+        self._optim.zero_grad()
 
     def update(self, loss: torch.Tensor) -> None:
         self._walltime = time.perf_counter()
@@ -119,6 +122,7 @@ class BinTrainer(Trainer):
             self._scheduler.step(metrics=loss)
         else:
             self._scheduler.step()
+        self._loss.reset()
         self._epoch += 1
         self._cur_chkpt_count += 1
         self._lr = self._optim.param_groups[0]['lr']
@@ -134,23 +138,19 @@ class BinTrainer(Trainer):
 
         """
         while not self.should_terminate():
-            acc_train, prec_train, rec_train, f1_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
-            acc_test, prec_test, rec_test, f1_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
+            nac_mae_train, nac_mse_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
+            nac_mae_test, nac_mse_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
 
             self.log_metrics(
-                accuracy_train=acc_train,
-                accuracy_test=acc_test,
-                precision_train=prec_train,
-                precision_test=prec_test,
-                recall_train=rec_train,
-                recall_test=rec_test,
-                f1_train=f1_train,
-                f1_test=f1_test
+                train_nac_mae=nac_mae_train,
+                test_nac_mae=nac_mae_test,
+                train_nac_mse=nac_mse_train,
+                test_nac_mse=nac_mse_test,
             )
-
-            self.update(self._loss.compute_loss())
 
             if self._cur_chkpt_count == self._chkpt_freq:
                 self.chkpt()
+
+            self.update(self._loss.compute_loss())
 
         return self._exit_code

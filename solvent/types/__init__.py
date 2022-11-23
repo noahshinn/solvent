@@ -3,5 +3,6 @@ from ._types import (
     QMPredMAE,
     PosIntTuple,
     Loaders,
-    BinPredMetrics
+    BinPredMetrics,
+    NACPredMetrics
 )

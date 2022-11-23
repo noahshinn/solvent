@@ -1,4 +1,4 @@
-from solvent.data import NACBinDataset
+from solvent.data import BinDataset
 from solvent.models import BinModel
 from solvent.train import BinTrainer
 
@@ -11,7 +11,7 @@ SPLIT = 0.9
 
 NATOMS = 6
 
-ds = NACBinDataset(
+ds = BinDataset(
     json_file=DATA_FILE,
     nstructures=NSTRUCTURES,
     one_hot_key={
