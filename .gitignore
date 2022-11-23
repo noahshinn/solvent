@@ -11,6 +11,7 @@ dev_guide.txt
 **train.py
 **constants.py
 **.json
+**root/
 
 # Byte-compiled / optimized / DLL files
 *.py[cod]
