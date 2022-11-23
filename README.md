@@ -22,7 +22,7 @@ To install:
   sudo yum -y install nvidia-driver-latest-dkms cuda
   sudo yum -y install cuda-drivers
   ```
-  * Install [torch](https://pytorch.org/) with CUDA
+  * Install [torch](https://pytorch.org/) with [CUDA](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) 11.6
   ```
   pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
   ```
