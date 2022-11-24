@@ -17,6 +17,7 @@ class Logger:
             self,
             log_dir: str,
             is_resume: bool,
+            verbose: bool,
         ) -> None:
         """
         Args:
@@ -28,6 +29,7 @@ class Logger:
             (None)
 
         """
+        self._verbose = verbose
         self._dir = log_dir
         self._file = os.path.join(log_dir, 'out.log')
         self._performance_queue = PriorityQueue()
@@ -166,6 +168,10 @@ Duration: {t_s[0]} hrs {t_s[1]} min {t_s[2]:.2f} sec
 
 """
         self.log(s)
+
+    @staticmethod
+    def verbose_logger(epoch: int, msg: str) -> None:
+        print(f'EPOCH {epoch}: {msg}')
 
     @abc.abstractmethod
     def log_epoch(self, *args, **kwargs) -> None:

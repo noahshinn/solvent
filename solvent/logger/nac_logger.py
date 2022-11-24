@@ -4,8 +4,8 @@ from solvent.logger import Logger
 
 
 class NACLogger(Logger):
-    def __init__(self, log_dir: str, is_resume: bool) -> None:
-        super().__init__(log_dir, is_resume)
+    def __init__(self, log_dir: str, is_resume: bool, verbose: bool = True) -> None:
+        super().__init__(log_dir, is_resume, verbose)
 
     def log_epoch(
             self,
@@ -33,6 +33,9 @@ Wall time: {duration:.2f} (s)
 
 """
         self.log(s)
+        
+        if self._verbose:
+            self.verbose_logger(epoch, f'MAE: {test_mae}, MSE: {test_mse}')
 
     def format_best_params(self) -> str:
         """
