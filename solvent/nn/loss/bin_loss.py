@@ -22,7 +22,7 @@ class BinLoss(LossMixin):
         self._fn = 0
 
     def __call__(self, pred: torch.Tensor, target: torch.Tensor) -> None:
-        self._c_loss += self._loss(pred, target)
+        self._c_loss += self._loss(pred, target).detach()
         if pred == 1:
             if target == 1:
                 self._tp += 1

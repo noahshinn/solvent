@@ -34,10 +34,10 @@ class EnergyForceLoss(LossMixin):
             f_pred: torch.Tensor,
             f_target: torch.Tensor,
         ) -> None:
-        self._c_e_mae += mae(e_pred, e_target)
-        self._c_e_mse += mse(e_pred, e_target)
-        self._c_f_mae += mae(f_pred, f_target)
-        self._c_f_mse += mse(f_pred, f_target)
+        self._c_e_mae += mae(e_pred, e_target).detach()
+        self._c_e_mse += mse(e_pred, e_target).detach()
+        self._c_f_mae += mae(f_pred, f_target).detach()
+        self._c_f_mse += mse(f_pred, f_target).detach()
         self._n += 1
 
     def compute_metrics(self) -> QMPredMAE:
