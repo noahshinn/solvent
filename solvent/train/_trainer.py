@@ -7,6 +7,7 @@ import os
 import abc
 import time
 import torch
+import multiprocessing
 from torch.optim import (
     Adam,
     SGD
@@ -19,7 +20,7 @@ from torch.optim.lr_scheduler import (
 from solvent import constants
 from solvent.utils import InvalidFileType, set_exit_handler
 
-from typing import Union
+from typing import Union, Optional
 from torch_geometric.loader import DataLoader
 
 
@@ -77,13 +78,19 @@ class Trainer:
             start_epoch: int = 0,
             start_lr: float = 1e-2,
             chkpt_freq: int = 1,
-            description: str = ''
+            description: str = '',
+            ncores: Optional[int] = None
         ) -> None:
         torch.set_default_dtype(torch.float32)
         if torch.cuda.is_available():
             self._device = 'cuda:0'
         else:
             self._device = 'cpu'
+        max_ncores = multiprocessing.cpu_count()
+        if ncores is None or ncores > max_ncores:
+            torch.set_num_threads(max_ncores)
+        else:
+            torch.set_num_threads(ncores)
 
         self._model = model
         self._model.to(self._device)

@@ -8,6 +8,7 @@ DATA_FILE = '../../scratch/filtered-005-02.json'
 NSTRUCTURES = 100
 NATOM_TYPES = 3
 BATCH_SIZE = 1
+NCORES = 11
 SPLIT = 0.9
 NATOMS = 6
 MU = 0.0
@@ -53,7 +54,8 @@ trainer = NACTrainer(
     test_loader=test_loader,
     mu=MU,
     std=STD,
-    description='nac inference model'
+    description='nac inference model',
+    ncores=NCORES
 )
 print('trainer initialized')
 

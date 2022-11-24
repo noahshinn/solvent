@@ -5,6 +5,7 @@ STATUS: NOT TESTED
 
 import time
 import torch
+import multiprocessing
 from torch.optim import Adam, SGD
 from torch.optim.lr_scheduler import ExponentialLR, ReduceLROnPlateau
 
@@ -14,7 +15,7 @@ from solvent.nn import NACLoss
 from solvent.utils import mse, normalize
 from solvent.logger import NACLogger
 
-from typing import Union, Dict
+from typing import Union, Dict, Optional
 from torch_geometric.data.data import Data
 from solvent.types import NACPredMetrics 
 
@@ -34,9 +35,10 @@ class NACTrainer(Trainer):
             start_epoch: int = 0,
             start_lr: float = 0.01,
             chkpt_freq: int = 1,
-            description: str = ''
+            description: str = '',
+            ncores: Optional[int] = None
         ) -> None:
-        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, chkpt_freq, description)
+        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, chkpt_freq, description, ncores)
         self._loss = NACLoss(self._device)
         self._logger = NACLogger(self._log_dir, self._is_resume)
         

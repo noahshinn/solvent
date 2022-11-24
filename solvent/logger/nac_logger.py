@@ -35,7 +35,7 @@ Wall time: {duration:.2f} (s)
         self.log(s)
         
         if self._verbose:
-            self.verbose_logger(epoch, f'MAE: {test_mae}, MSE: {test_mse}')
+            self.verbose_logger(epoch, f'MAE: {test_mae.item():.4f}, MSE: {test_mse.item():.4f}')
 
     def format_best_params(self) -> str:
         """
