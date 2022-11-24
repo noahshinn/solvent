@@ -7,7 +7,6 @@ class NACLogger(Logger):
     def __init__(self, log_dir: str, is_resume: bool) -> None:
         super().__init__(log_dir, is_resume)
 
-    # TODO: implement performance queue update
     def log_epoch(
             self,
             epoch: int,
