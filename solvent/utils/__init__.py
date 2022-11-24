@@ -14,6 +14,7 @@ from ._priority_queue import PriorityQueue
 from ._exit_handler import set_exit_handler
 from ._to_bin import to_bin
 from .normalize import normalize
+from .get_ram_avail import get_ram_avail
 
 from ._exceptions import (
     DataNotLoadedException,

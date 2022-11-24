@@ -1,5 +1,6 @@
 import torch
 
+from solvent.utils import get_ram_avail
 from solvent.logger import Logger
 
 
@@ -36,6 +37,7 @@ Wall time: {duration:.2f} (s)
         
         if self._verbose:
             self.verbose_logger(epoch, f'MAE: {test_mae.item():.4f}, MSE: {test_mse.item():.4f}')
+            print(get_ram_avail())
 
     def format_best_params(self) -> str:
         """
