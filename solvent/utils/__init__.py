@@ -1,6 +1,7 @@
 from ._read_yaml import read_yaml
 from ._mae import mae
 from ._mse import mse 
+from ._mape import mape
 from ._rmse import rmse 
 from ._hartree_to_kcal import hartree_to_kcal
 from ._kcal_to_hartree import kcal_to_hartree
@@ -14,6 +15,7 @@ from ._priority_queue import PriorityQueue
 from ._exit_handler import set_exit_handler
 from ._to_bin import to_bin
 from .normalize import normalize
+from .renormalize import renormalize
 from .get_ram_avail import get_ram_avail
 
 from ._exceptions import (
