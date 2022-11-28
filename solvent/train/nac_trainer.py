@@ -5,14 +5,13 @@ STATUS: NOT TESTED
 
 import time
 import torch
-import multiprocessing
 from torch.optim import Adam, SGD
 from torch.optim.lr_scheduler import ExponentialLR, ReduceLROnPlateau
 
 from solvent.train import Trainer
 from solvent.data import DataLoader
 from solvent.nn import NACLoss
-from solvent.utils import mse, normalize
+from solvent.utils import normalize, mape
 from solvent.logger import NACLogger
 
 from typing import Union, Dict, Optional
@@ -52,6 +51,8 @@ class NACTrainer(Trainer):
             test_nac_mae: torch.Tensor,
             train_nac_mse: torch.Tensor,
             test_nac_mse: torch.Tensor,
+            train_nac_mape: torch.Tensor,
+            test_nac_mape: torch.Tensor,
         ) -> None:
         self._logger.log_epoch(
             epoch=self._epoch,
@@ -60,6 +61,8 @@ class NACTrainer(Trainer):
             test_mae=test_nac_mae,
             train_mse=train_nac_mse,
             test_mse=test_nac_mse,
+            train_mape=train_nac_mape,
+            test_mape=test_nac_mape,
             duration=time.perf_counter() - self._walltime
         )
 
@@ -108,11 +111,11 @@ class NACTrainer(Trainer):
                 normalize(structure['nacs'].to(self._device), self._mu, self._std)
             )
             if mode == 'TRAIN':
-                loss = mse(pred, normalize(structure['nacs'].to(self._device), self._mu, self._std))
+                loss = mape(pred, normalize(structure['nacs'].to(self._device), self._mu, self._std))
                 loss.backward()
                 self.step()
-        nac_mae, nac_mse = self._loss.compute_metrics()
-        return NACPredMetrics(nac_mae, nac_mse)
+        nac_mae, nac_mse, nac_mape = self._loss.compute_metrics()
+        return NACPredMetrics(nac_mae, nac_mse, nac_mape)
 
     def step(self) -> None:
         self._optim.step()
@@ -140,14 +143,16 @@ class NACTrainer(Trainer):
 
         """
         while not self.should_terminate():
-            nac_mae_train, nac_mse_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
-            nac_mae_test, nac_mse_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
+            nac_mae_train, nac_mse_train, nac_mape_train = self.evaluate(loader=self._train_loader, mode='TRAIN') # type: ignore
+            nac_mae_test, nac_mse_test, nac_mape_test = self.evaluate(loader=self._test_loader, mode='TEST') # type: ignore
 
             self.log_metrics(
                 train_nac_mae=nac_mae_train,
                 test_nac_mae=nac_mae_test,
                 train_nac_mse=nac_mse_train,
                 test_nac_mse=nac_mse_test,
+                train_nac_mape=nac_mape_train,
+                test_nac_mape=nac_mape_test,
             )
 
             if self._cur_chkpt_count == self._chkpt_freq:

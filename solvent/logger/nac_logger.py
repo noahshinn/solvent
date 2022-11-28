@@ -16,6 +16,8 @@ class NACLogger(Logger):
             test_mae: torch.Tensor,
             train_mse: torch.Tensor,
             test_mse: torch.Tensor,
+            train_mape: torch.Tensor,
+            test_mape: torch.Tensor,
             duration: float
         ) -> None:
         """Logs a message after an epoch is complete."""
@@ -23,12 +25,15 @@ class NACLogger(Logger):
             'epoch': epoch,
             'nac_test_mae': test_mae,
             'nac_test_mse': test_mse,
+            'nac_test_mape': test_mape,
         }, priority=test_mse)
         s = f"""EPOCH {epoch}:
 Train MAE: {train_mae.item():.4f}
 Test MAE: {test_mae.item():.4f}
 Train MSE: {train_mse.item():.4f}
 Test MSE: {test_mse.item():.4f}
+Train MAPE: {train_mape.item():.4f}
+Test MAPE: {test_mape.item():.4f}
 Learning rate: {lr:.5f}
 Wall time: {duration:.2f} (s)
 
@@ -36,8 +41,7 @@ Wall time: {duration:.2f} (s)
         self.log(s)
         
         if self._verbose:
-            self.verbose_logger(epoch, f'MAE: {test_mae.item():.4f}, MSE: {test_mse.item():.4f}')
-            print(get_ram_avail())
+            self.verbose_logger(epoch, f'MAE: {test_mae.item():.4f}, MSE: {test_mse.item():.4f}, MAPE: {test_mape.item():.4f}')
 
     def format_best_params(self) -> str:
         """
@@ -55,6 +59,7 @@ Wall time: {duration:.2f} (s)
 Epoch: {p['epoch']}
 NAC test mae: {p['nac_test_mae']}
 NAC test mse: {p['nac_test_mse']}
+NAC test mape: {p['nac_test_mape']}
 """
             n -= 1
         return s

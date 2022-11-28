@@ -27,6 +27,7 @@ class BinPredMetrics(NamedTuple):
 class NACPredMetrics(NamedTuple):
     nac_mae: torch.Tensor
     nac_mse: torch.Tensor
+    nac_mape: torch.Tensor
 
 class PosIntTuple(NamedTuple):
     num1: PosInt
