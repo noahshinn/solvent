@@ -5,7 +5,7 @@ STATUS: NOT TESTED
 
 import torch
 
-from solvent.utils import mae, mse, mape
+from solvent.utils import mae, mse
 from ._loss import LossMixin
 
 from solvent.types import NACPredMetrics
@@ -17,13 +17,11 @@ class NACLoss(LossMixin):
 
         self._c_mae = torch.zeros(1).to(device)
         self._c_mse = torch.zeros(1).to(device)
-        self._c_mape = torch.zeros(1).to(device)
         self._n = 0
 
     def __call__(self, nac_pred: torch.Tensor, nac_target: torch.Tensor) -> None:
         self._c_mae += mae(nac_pred, nac_target).detach()
         self._c_mse += mse(nac_pred, nac_target).detach()
-        self._c_mape += mape(nac_pred, nac_target).detach()
         self._n += 1
 
     def compute_metrics(self) -> NACPredMetrics:

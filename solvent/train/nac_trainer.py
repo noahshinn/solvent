@@ -5,7 +5,6 @@ STATUS: NOT TESTED
 
 import time
 import torch
-import multiprocessing
 from torch.optim import Adam, SGD
 from torch.optim.lr_scheduler import ExponentialLR, ReduceLROnPlateau
 
