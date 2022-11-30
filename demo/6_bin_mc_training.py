@@ -5,16 +5,19 @@ from solvent.train import MCTrainer
 """
 BIN KEY:
     0: zero
-    1: non-zero
-    2: infinity
+    1: [-0.2, -0.1625)
+    2: [-0.1625, -0.125)
+    3: [-0.125, -0.0875)
+    4: [-0.0875, -0.05)
+    5: infinity
 
 """
 
 ROOT = 'root'
-RUN_NAME = 'mc-training'
-DATA_FILE = '../../nac-sampling/gen_visuals/nacs-3-bins.json'
+RUN_NAME = '6-bin-mc-training'
+DATA_FILE = '../../nac-sampling/gen_visuals/nacs-6-bins.json'
 NSTRUCTURES = 1000
-NCLASSES = 3
+NCLASSES = 6
 NATOM_TYPES = 3
 BATCH_SIZE = 1
 NCORES = 12
@@ -63,7 +66,7 @@ trainer = MCTrainer(
     train_loader=train_loader,
     test_loader=test_loader,
     nclasses=NCLASSES,
-    description='multi-class classification training',
+    description='6-class classification training',
     ncores=NCORES
 )
 print('trainer initialized')
