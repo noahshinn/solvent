@@ -4,5 +4,6 @@ from ._types import (
     PosIntTuple,
     Loaders,
     BinPredMetrics,
-    NACPredMetrics
+    NACPredMetrics,
+    MCPredMetrics
 )

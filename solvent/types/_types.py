@@ -28,6 +28,10 @@ class NACPredMetrics(NamedTuple):
     nac_mae: torch.Tensor
     nac_mse: torch.Tensor
 
+class MCPredMetrics(NamedTuple):
+    accuracy: torch.Tensor
+    loss: torch.Tensor
+
 class PosIntTuple(NamedTuple):
     num1: PosInt
     num2: PosInt

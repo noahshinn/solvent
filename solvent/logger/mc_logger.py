@@ -1,10 +1,9 @@
 import torch
 
-from solvent.utils import get_ram_avail
 from solvent.logger import Logger
 
 
-class NACLogger(Logger):
+class MCLogger(Logger):
     def __init__(self, log_dir: str, is_resume: bool, verbose: bool = True) -> None:
         super().__init__(log_dir, is_resume, verbose)
 
@@ -12,31 +11,31 @@ class NACLogger(Logger):
             self,
             epoch: int,
             lr: float,
-            train_mae: torch.Tensor,
-            test_mae: torch.Tensor,
-            train_mse: torch.Tensor,
-            test_mse: torch.Tensor,
+            accuracy_train: torch.Tensor,
+            accuracy_test: torch.Tensor,
+            loss_train: torch.Tensor,
+            loss_test: torch.Tensor,
             duration: float
         ) -> None:
         """Logs a message after an epoch is complete."""
         self._performance_queue.push({
             'epoch': epoch,
-            'nac_test_mae': test_mae,
-            'nac_test_mse': test_mse,
-        }, priority=test_mse)
+            'mc_test_acc': accuracy_test,
+            'mc_test_loss': loss_test,
+        }, priority=accuracy_test)
         s = f"""EPOCH {epoch}:
-Train MAE: {train_mae.item():.4f}
-Test MAE: {test_mae.item():.4f}
-Train MSE: {train_mse.item():.4f}
-Test MSE: {test_mse.item():.4f}
+Train accuracy: {accuracy_train.item():.4f}
+Test accuracy: {accuracy_test.item():.4f}
+Train loss: {loss_train.item():.4f}
+Test loss: {loss_test.item():.4f}
 Learning rate: {lr:.5f}
 Wall time: {duration:.2f} (s)
 
 """
         self.log(s)
-        
+
         if self._verbose:
-            self.verbose_logger(epoch, f'MAE: {test_mae.item():.4f}, MSE: {test_mse.item():.4f}')
+            self.verbose_logger(epoch, f'Accuracy: {accuracy_test.item():.4f}, Loss: {loss_test.item():.4f}')
 
     def format_best_params(self) -> str:
         """
@@ -55,8 +54,8 @@ Wall time: {duration:.2f} (s)
             p = self._performance_queue.pop()
             s += f"""
 Epoch: {p['epoch']}
-NAC test mae: {p['nac_test_mae'].item():.4f}
-NAC test mse: {p['nac_test_mse'].item():.4f}
+MC test acc: {p['mc_test_acc'].item():.4f}
+MC test loss: {p['mc_test_loss'].item():.4f}
 """
             n -= 1
         return s
