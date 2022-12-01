@@ -58,5 +58,5 @@ for i in range(_EFFECTIVE_NBINS):
     load_env_str = 'source activate e3nn_env'
     with open(submission_file, 'w') as f:
         f.write(f'{slurm_str}\n\n{load_conda_str}\n{load_env_str}\n\n{cmd}')
-    subprocess.run(['sbatch', submission_file])
+    # subprocess.run(['sbatch', submission_file])
     print(f'submitted job #{i}')
