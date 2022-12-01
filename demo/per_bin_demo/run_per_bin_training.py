@@ -57,7 +57,10 @@ for i in range(_EFFECTIVE_NBINS):
 #SBATCH --time=23:59:00
 #SBATCH --job-name=workspace
 #SBATCH --partition=short
-{"#SBATCH --partition=reservation\n#SBATCH --reservation=lopez" if USE_RESERVATION else ""}
+"""
+    if USE_RESERVATION:
+        slurm_str += """#SBATCH --partition=reservation
+#SBATCH --reservation=lopez
 """
     load_conda_str = 'module load anaconda3/2022.01'
     load_env_str = 'source activate e3nn_env'
