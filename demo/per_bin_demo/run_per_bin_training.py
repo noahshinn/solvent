@@ -54,7 +54,7 @@ for i in range(_EFFECTIVE_NBINS):
 #SBATCH --mem=128Gb
 #SBATCH --cpus-per-task={NCORES}
 #SBATCH --time=23:59:00
-#SBATCH --job-name=workspace
+#SBATCH --job-name=nac-training-{_NBINS}-bin-{_CUR_BIN}
 #SBATCH --partition=short
 """
     if USE_RESERVATION:
