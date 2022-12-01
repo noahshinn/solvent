@@ -13,13 +13,14 @@ else:
     _NBINS = int(_splt[-1].split('-bins')[0])
 _EFFECTIVE_NBINS = _NBINS - 2
 ROOT = 'root-per-bin-training'
-NSTRUCTURES = 100
+NSTRUCTURES = 1000
 NATOM_TYPES = 3
 BATCH_SIZE = 1
 NCORES = 128
 SPLIT = 0.9
 NATOMS = 6
 MU = 0.0
+USE_RESERVATION = True
 
 def compute_std(file: str) -> float:
     with open(file, 'r') as f:
@@ -56,12 +57,11 @@ for i in range(_EFFECTIVE_NBINS):
 #SBATCH --time=23:59:00
 #SBATCH --job-name=workspace
 #SBATCH --partition=short
-
-
+{"#SBATCH --partition=reservation\n#SBATCH --reservation=lopez" if USE_RESERVATION else ""}
 """
     load_conda_str = 'module load anaconda3/2022.01'
     load_env_str = 'source activate e3nn_env'
     with open(submission_file, 'w') as f:
         f.write(f'{slurm_str}\n\n{load_conda_str}\n{load_env_str}\n\n{cmd}')
-    # subprocess.run(['sbatch', submission_file])
+    subprocess.run(['sbatch', submission_file])
     print(f'submitted job #{i}')
