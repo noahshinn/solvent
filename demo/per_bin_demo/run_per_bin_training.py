@@ -25,7 +25,8 @@ def compute_std(file: str) -> float:
     with open(file, 'r') as f:
         data = json.load(f)
         nacs = np.asarray(data['nacs'])
-        return float(nacs.std(axis=1))
+        out = float(np.absolute(nacs).std())
+        return out
 
 for i in range(_EFFECTIVE_NBINS):
     _CUR_BIN = i + 1
