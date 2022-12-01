@@ -77,7 +77,6 @@ class Trainer:
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
             start_epoch: int = 0,
             start_lr: float = 1e-2,
-            chkpt_freq: int = 1,
             description: str = '',
             ncores: Optional[int] = None
         ) -> None:
@@ -110,8 +109,6 @@ class Trainer:
 
         self._epoch = start_epoch
         self._log_dir = os.path.join(root, run_name)
-        self._chkpt_freq = chkpt_freq
-        self._cur_chkpt_count = 0
         self._exit_code = 'NOT TERMINATED'
 
         if not optim is None:
@@ -142,6 +139,8 @@ class Trainer:
         self._description = description
         self._walltime = self._srt_time = time.perf_counter()
 
+        self._best_metric = float('-inf')
+
     def step(self, loss: torch.Tensor) -> None:
         """
         Propagates the training by one step.
@@ -160,7 +159,7 @@ class Trainer:
 
     def chkpt(self) -> None:
         """Logs a checkpoint to the logging directory."""
-        save_path = os.path.join(self._log_dir, f'{str(self._epoch)}.pt')
+        save_path = os.path.join(self._log_dir, 'best_params.pth')
         chkpt = {
             'model': self._model.state_dict(),
             'optim': self._optim.state_dict(),
@@ -169,7 +168,6 @@ class Trainer:
         }
         torch.save(chkpt, save_path)
         self._logger.log_chkpt(path=save_path)
-        self._cur_chkpt_count = 0
 
     def should_terminate(self) -> bool:
         """

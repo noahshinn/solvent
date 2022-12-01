@@ -33,11 +33,10 @@ class NACTrainer(Trainer):
             std: Union[float, torch.Tensor] = 1.0,
             start_epoch: int = 0,
             start_lr: float = 0.01,
-            chkpt_freq: int = 1,
             description: str = '',
             ncores: Optional[int] = None
         ) -> None:
-        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, chkpt_freq, description, ncores)
+        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, description, ncores)
         self._loss = NACLoss(self._device)
         self._logger = NACLogger(self._log_dir, self._is_resume)
         
@@ -149,7 +148,8 @@ class NACTrainer(Trainer):
                 test_nac_mse=nac_mse_test,
             )
 
-            if self._cur_chkpt_count == self._chkpt_freq:
+            if nac_mae_test < self._best_metric:
+                self._best_metric = nac_mae_test
                 self.chkpt()
 
             self.update(self._loss.compute_loss())

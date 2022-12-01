@@ -208,7 +208,8 @@ class EFTrainer(Trainer):
 
             self.update(self._loss.compute_loss())
 
-            if self._cur_chkpt_count == self._chkpt_freq:
+            if e_test_mae < self._best_metric:
+                self._best_metric = e_test_mae
                 self.chkpt()
 
         return self._exit_code

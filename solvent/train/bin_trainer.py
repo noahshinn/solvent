@@ -150,7 +150,8 @@ class BinTrainer(Trainer):
 
             self.update(self._loss.compute_loss())
 
-            if self._cur_chkpt_count == self._chkpt_freq:
+            if acc_test < self._best_metric:
+                self._best_metric = acc_test
                 self.chkpt()
 
         return self._exit_code

@@ -155,7 +155,8 @@ class MCTrainer(Trainer):
                 test_loss=loss_test
             )
 
-            if self._cur_chkpt_count == self._chkpt_freq:
+            if acc_test < self._best_metric:
+                self._best_metric = acc_test
                 self.chkpt()
 
             self.update(self._loss.compute_loss())
