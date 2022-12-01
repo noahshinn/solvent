@@ -8,7 +8,7 @@ assert len(sys.argv) == 2
 DATA_DIR = sys.argv[1]
 _splt = DATA_DIR.split('/')
 if len(_splt) == 1:
-    _NBINS = int(_splt[0].split('-bins')[0])
+    _NBINS = int(_splt[-2].split('-bins')[0])
 else:
     _NBINS = int(_splt[-1].split('-bins')[0])
 _EFFECTIVE_NBINS = _NBINS - 2
