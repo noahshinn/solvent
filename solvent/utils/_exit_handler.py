@@ -1,5 +1,5 @@
 """
-STATUS: DEV
+STATUS: NOT TESTED
 
 """
 
@@ -14,8 +14,3 @@ def set_exit_handler(c: Callable) -> None:
         c()
         sys.exit(0)
     signal.signal(signal.SIGINT, signal_handler)
-
-def log() -> None:
-    print('stopping process')
-
-set_exit_handler(log)
