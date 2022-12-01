@@ -6,7 +6,10 @@ import numpy as np
 
 assert len(sys.argv) == 2
 DATA_DIR = sys.argv[1]
-_NBINS = int(os.path.basename(DATA_DIR).split('-')[0])
+if DATA_DIR.endswith('/'):
+    _NBINS = int(os.path.basename(DATA_DIR[:-1]).split('-')[0])
+else:
+    _NBINS = int(os.path.basename(DATA_DIR).split('-')[0])
 _EFFECTIVE_NBINS = _NBINS - 2
 ROOT = 'root-per-bin-training'
 NSTRUCTURES = 1000
