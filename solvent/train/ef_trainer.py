@@ -183,7 +183,6 @@ class EFTrainer(Trainer):
             self._scheduler.step()
         self._loss.reset()
         self._epoch += 1
-        self._cur_chkpt_count += 1
         self._lr = self._optim.param_groups[0]['lr']
 
     def fit(self) -> str:
