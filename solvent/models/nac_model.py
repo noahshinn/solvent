@@ -91,4 +91,4 @@ class NACModel(torch.nn.Module):
 
         """
         out = self.base_model(data)
-        return out.reshape((out.size(dim=-1), self._natoms, 3))
+        return out.reshape(self._natoms, 3)
