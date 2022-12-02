@@ -4,7 +4,7 @@ from solvent.models import NACModel
 from solvent.train import NACTrainer
 
 
-assert len(sys.argv) == 12
+assert len(sys.argv) == 14
 ROOT = sys.argv[1]
 RUN_NAME = sys.argv[2]
 DATA_FILE = sys.argv[3]
