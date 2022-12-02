@@ -103,10 +103,6 @@ class MCTrainer(Trainer):
         for structure in loader:
             structure.to(self._device)
             pred = self.pred(structure)
-            print(f'pred: {pred}')
-            print(pred.dtype)
-            print(f"target: {to_mc(structure['bin'].to(self._device), self._nclasses)}")
-            print(to_mc(structure['bin'].to(self._device), self._nclasses).dtype)
             self._loss(
                 pred,
                 to_mc(structure['bin'].to(self._device), self._nclasses)
@@ -153,7 +149,7 @@ class MCTrainer(Trainer):
                 test_loss=loss_test
             )
 
-            if acc_test < self._best_metric:
+            if (1 - acc_test) < self._best_metric:
                 self._best_metric = acc_test
                 self.chkpt()
 

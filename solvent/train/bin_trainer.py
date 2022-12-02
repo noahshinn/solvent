@@ -148,7 +148,7 @@ class BinTrainer(Trainer):
 
             self.update(self._loss.compute_loss())
 
-            if acc_test < self._best_metric:
+            if (1 - acc_test) < self._best_metric:
                 self._best_metric = acc_test
                 self.chkpt()
 
