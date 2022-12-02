@@ -31,10 +31,9 @@ class BinTrainer(Trainer):
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
             start_epoch: int = 0,
             start_lr: float = 0.01,
-            chkpt_freq: int = 1,
             description: str = ''
         ) -> None:
-        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, chkpt_freq, description)
+        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, description)
         self._loss = BinLoss(self._device)
         self._logger = BinLogger(self._log_dir, self._is_resume)
     

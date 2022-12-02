@@ -42,7 +42,6 @@ class EFTrainer(Trainer):
             units: str = 'hartree',
             start_epoch: int = 0,
             start_lr: float = 1e-2,
-            chkpt_freq: int = 1,
             description: str = ''
         ) -> None:
         super().__init__(
@@ -55,7 +54,6 @@ class EFTrainer(Trainer):
             scheduler=scheduler,
             start_epoch=start_epoch,
             start_lr=start_lr,
-            chkpt_freq=chkpt_freq,
             description=description
         )
         self._loss = EnergyForceLoss(

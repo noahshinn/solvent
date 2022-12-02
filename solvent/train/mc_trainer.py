@@ -33,11 +33,10 @@ class MCTrainer(Trainer):
             scheduler: Union[ExponentialLR, ReduceLROnPlateau, None] = None,
             start_epoch: int = 0,
             start_lr: float = 0.01,
-            chkpt_freq: int = 1,
             description: str = '',
             ncores: Optional[int] = None
         ) -> None:
-        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, chkpt_freq, description, ncores)
+        super().__init__(root, run_name, model, train_loader, test_loader, optim, scheduler, start_epoch, start_lr, description, ncores)
         self._loss = MCLoss(self._device)
         self.__loss = CrossEntropyLoss()
         self._logger = MCLogger(self._log_dir, self._is_resume)
