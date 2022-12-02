@@ -13,6 +13,7 @@ def get_value(line: str) -> float:
 
 fig, axs = plt.subplots(len(LOG_FILES) * 2)
 fig.suptitle(TITLE)
+fig.tight_layout()
 for i, log_file in enumerate(LOG_FILES):
     train_mae = []
     train_mse = []
