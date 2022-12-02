@@ -139,7 +139,7 @@ class Trainer:
         self._description = description
         self._walltime = self._srt_time = time.perf_counter()
 
-        self._best_metric = float('-inf')
+        self._best_metric = float('inf')
 
     def step(self, loss: torch.Tensor) -> None:
         """

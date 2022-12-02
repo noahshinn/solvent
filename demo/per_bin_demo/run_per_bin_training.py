@@ -30,7 +30,7 @@ def compute_std(file: str) -> float:
 
 for i in range(_EFFECTIVE_NBINS):
     _CUR_BIN = i + 1
-    _RUN_NAME = f'nac-training-{_NBINS}-bins'
+    _RUN_NAME = f'nac-training-{_NBINS}-bins-bin-{_CUR_BIN}'
     _DATA_FILE = os.path.join(DATA_DIR, f'{_NBINS}-bins-{_CUR_BIN}-data.json')
     _STD = compute_std(_DATA_FILE)
     cmd = 'python ./run_single_bin_training.py'
