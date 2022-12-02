@@ -19,15 +19,21 @@ for i, log_file in enumerate(LOG_FILES):
     train_mse = []
     test_mae = []
     test_mse = []
+    cur_best_mae = 0.0
+    cur_best_mse = 0.0
     with open(log_file, 'r') as f:
         data = f.readlines()
-        for line in data:
+        for j, line in enumerate(data):
             if 'Train MAE: ' in line:
                 train_mae += [get_value(line)]
             elif 'Train MSE: ' in line:
                 train_mse += [get_value(line)]
             elif 'Test MAE: ' in line:
-                test_mae += [get_value(line)]
+                val = get_value(line)
+                test_mae += [val]
+                if val > cur_best_mae:
+                    cur_best_mae = val
+                    cur_best_mse = get_value(data[j + 2])
             elif 'Test MSE: ' in line:
                 test_mse += [get_value(line)]
 
@@ -40,5 +46,8 @@ for i, log_file in enumerate(LOG_FILES):
     axs[i * 2 + 1].plot(epochs, test_mse, label='Test MSE', linestyle='-')
     axs[i * 2].legend()
     axs[i * 2 + 1].legend()
+
+    print(f'Best MAE: {cur_best_mae}')
+    print(f'Best MSE: {cur_best_mse}')
 plt.show()
 fig.savefig(SAVE_FILE)
