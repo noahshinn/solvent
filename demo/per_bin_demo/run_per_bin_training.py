@@ -53,7 +53,7 @@ for i in range(_EFFECTIVE_NBINS):
 #SBATCH --nodes=1
 #SBATCH --mem=128Gb
 #SBATCH --cpus-per-task={NCORES}
-#SBATCH --time=23:59:00
+#SBATCH --time=4-00:00:00
 #SBATCH --job-name=nac-training-{_NBINS}-bin-{_CUR_BIN}
 #SBATCH --partition=short
 """
