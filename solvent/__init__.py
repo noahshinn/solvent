@@ -4,3 +4,4 @@ from . import train
 from . import nn
 from . import data
 from . import types
+from . import deploy
