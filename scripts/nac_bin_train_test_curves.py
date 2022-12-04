@@ -31,7 +31,7 @@ for i, log_file in enumerate(LOG_FILES):
             elif 'Test MAE: ' in line:
                 val = get_value(line)
                 test_mae += [val]
-                if val > cur_best_mae:
+                if val < cur_best_mae:
                     cur_best_mae = val
                     cur_best_mse = get_value(data[j + 2])
             elif 'Test MSE: ' in line:
