@@ -19,8 +19,8 @@ for i, log_file in enumerate(LOG_FILES):
     train_mse = []
     test_mae = []
     test_mse = []
-    cur_best_mae = 0.0
-    cur_best_mse = 0.0
+    cur_best_mae = float('inf')
+    cur_best_mse = float('inf')
     with open(log_file, 'r') as f:
         data = f.readlines()
         for j, line in enumerate(data):
