@@ -15,6 +15,7 @@ from ._priority_queue import PriorityQueue
 from ._exit_handler import set_exit_handler
 from ._to_bin import to_bin
 from .to_mc import to_mc
+from .from_mc import from_mc
 from .normalize import normalize
 from .renormalize import renormalize
 from .get_ram_avail import get_ram_avail

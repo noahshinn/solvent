@@ -5,5 +5,6 @@ from ._types import (
     Loaders,
     BinPredMetrics,
     NACPredMetrics,
-    MCPredMetrics
+    MCPredMetrics,
+    NACPred
 )

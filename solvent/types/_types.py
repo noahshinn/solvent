@@ -36,6 +36,10 @@ class PosIntTuple(NamedTuple):
     num1: PosInt
     num2: PosInt
 
+class NACPred(NamedTuple):
+    bin: int
+    nacs: torch.Tensor
+
 class Loaders(NamedTuple):
     train: DataLoader # FIXME: circular import if import from types
     test: DataLoader # FIXME: circular import if import from types

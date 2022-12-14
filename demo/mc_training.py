@@ -2,13 +2,6 @@ from solvent.data import MCDataset
 from solvent.models import MCModel
 from solvent.train import MCTrainer
 
-"""
-BIN KEY:
-    0: zero
-    1: non-zero
-    2: infinity
-
-"""
 
 ROOT = 'root'
 RUN_NAME = 'mc-training'
