@@ -1,8 +1,3 @@
-"""
-STATUS: PRODUCTION
-
-"""
-
 from torch_geometric.loader import DataLoader as DL
 
 from typing import List, Optional, Union

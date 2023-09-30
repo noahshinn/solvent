@@ -1,9 +1,4 @@
 """
-STATUS: DEV
-
-optional separate files?
-
-"""
 
 import torch
 from torch.optim import (

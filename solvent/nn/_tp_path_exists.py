@@ -1,8 +1,3 @@
-"""
-STATUS: DEV
-
-"""
-
 from e3nn import o3
 from typing import Union
 

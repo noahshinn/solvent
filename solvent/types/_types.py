@@ -1,8 +1,3 @@
-"""
-STATUS: DEV
-
-"""
-
 import torch
 from torch_geometric.data import DataLoader
 from typing import NamedTuple, NewType

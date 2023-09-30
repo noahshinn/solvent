@@ -1,8 +1,3 @@
-"""
-STATUS: DEV
-
-"""
-
 from torch_geometric.data.data import Data
 
 from solvent.data import Dataset

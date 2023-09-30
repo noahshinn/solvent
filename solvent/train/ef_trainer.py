@@ -1,8 +1,3 @@
-"""
-STATUS: NOT TESTED
-
-"""
-
 import time
 import torch
 from torch.optim import (

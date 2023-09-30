@@ -1,8 +1,3 @@
-"""
-STATUS: NOT TESTED
-
-"""
-
 import torch
 from e3nn import o3
 from torch_geometric.data import Data

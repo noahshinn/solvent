@@ -1,8 +1,3 @@
-"""
-STATUS: PRODUCTION
-
-"""
-
 from typing import List
 from solvent import types
 

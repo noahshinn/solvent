@@ -1,8 +1,3 @@
-"""
-STATUS: PRODUCTION
-
-"""
-
 import torch
 
 

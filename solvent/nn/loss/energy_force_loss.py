@@ -1,8 +1,3 @@
-"""
-STATUS: NOT TESTED
-
-"""
-
 import torch
 
 from solvent.utils import mae, mse

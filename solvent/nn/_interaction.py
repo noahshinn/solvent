@@ -1,8 +1,3 @@
-"""
-STATUS: NOT TESTED
-
-"""
-
 import math
 import torch
 from torch_scatter import scatter
