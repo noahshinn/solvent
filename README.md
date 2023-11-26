@@ -67,7 +67,7 @@ pip install pyyaml
 - Install Solvent from source by running:
 
 ```bash
-git clone https://github.com/noahshinn024/solvent.git
+git clone https://github.com/noahshinn/solvent.git
 cd solvent
 python setup.py develop
 ```
