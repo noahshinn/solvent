@@ -46,30 +46,10 @@ pip install --pre torch torchvision torchaudio --extra-index-url https://downloa
 pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.12.0+cu116.html
 ```
 
-- Install [e3nn](https://e3nn.org/)
+- Install the rest of the dependencies:
 
 ```bash
-pip install e3nn
-```
-
-- Install [joblib](https://joblib.readthedocs.io/en/latest/installing.html) for multiprocessing
-
-```bash
-pip install joblib
-```
-
-- Install [yaml](https://pypi.org/project/PyYAML/) for alternate config
-
-```bash
-pip install pyyaml
-```
-
-- Install Solvent from source by running:
-
-```bash
-git clone https://github.com/noahshinn/solvent.git
-cd solvent
-python setup.py develop
+pip install -r ./requirements.txt
 ```
 
 To run demo:
